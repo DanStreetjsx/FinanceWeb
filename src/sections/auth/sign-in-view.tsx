@@ -92,7 +92,7 @@ export function SignInView() {
       <TextField
         fullWidth
         label="Número de Teléfono"
-        placeholder="Ej: 51903194831 o 903194831"
+        placeholder="Ej: 908123564"
         {...register('phone_number')}
         error={!!errors.phone_number}
         helperText={errors.phone_number?.message}
