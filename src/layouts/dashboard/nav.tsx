@@ -53,6 +53,8 @@ export function NavDesktop({
         zIndex: 'var(--layout-nav-zIndex)',
         width: 'var(--layout-nav-vertical-width)',
         borderRight: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+        boxShadow: `inset -1px 0 0 ${theme.vars.palette.common.white}, 4px 0 10px -5px rgba(0,0,0,0.05)`,
+        bgcolor: 'background.neutral',
         [theme.breakpoints.up(layoutQuery)]: {
           display: 'flex',
         },
@@ -107,9 +109,7 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
 
   return (
     <>
-      <Logo />
-
-
+      <Logo sx={{ mb: 4, ml: 2 }} />
 
       <Scrollbar fillContent>
         <Box
@@ -151,12 +151,28 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
                         fontWeight: 'fontWeightMedium',
                         color: theme.vars.palette.text.secondary,
                         minHeight: 44,
+                        transition: theme.transitions.create(['all'], {
+                          duration: theme.transitions.duration.shortest,
+                        }),
+                        '&:hover': {
+                          bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.04),
+                          transform: 'translateX(4px)',
+                          boxShadow: `
+                            inset 0 1px 1px ${theme.vars.palette.common.white},
+                            0 4px 8px -2px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.1)}
+                          `,
+                        },
                         ...(isActived && {
                           fontWeight: 'fontWeightSemiBold',
                           color: theme.vars.palette.primary.main,
                           bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                          boxShadow: `
+                            inset 0 1px 1px ${theme.vars.palette.common.white},
+                            0 8px 16px -4px ${varAlpha(theme.vars.palette.primary.mainChannel, 0.16)}
+                          `,
                           '&:hover': {
                             bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
+                            transform: 'translateX(4px)',
                           },
                         }),
                       }),

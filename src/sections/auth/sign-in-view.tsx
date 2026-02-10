@@ -23,7 +23,6 @@ import { Iconify } from 'src/components/iconify';
 
 import RetroGrid from '../../components/magicui/RetroGrid';
 import { BorderBeam } from '../../components/magicui/BorderBeam';
-import SparklesText from '../../components/magicui/SparklesText';
 // ----------------------------------------------------------------------
 
 // Esquema de validación con Zod
@@ -97,13 +96,27 @@ export function SignInView() {
         {...register('phone_number')}
         error={!!errors.phone_number}
         helperText={errors.phone_number?.message}
-        sx={{ mb: 3 }}
+        sx={{ 
+          mb: 3,
+          '& .MuiOutlinedInput-root': {
+            bgcolor: 'background.neutral',
+            transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+            '&:hover': {
+              bgcolor: 'background.paper',
+            },
+            '&.Mui-focused': {
+              bgcolor: 'background.paper',
+              boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+            },
+            borderRadius: 1.5,
+          }
+        }}
         slotProps={{
           inputLabel: { shrink: true },
         }}
       />
 
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
+      <Link variant="body2" color="inherit" sx={{ mb: 1.5, alignSelf: 'flex-end', fontWeight: 600 }}>
         ¿Olvidaste tu contraseña?
       </Link>
 
@@ -114,6 +127,21 @@ export function SignInView() {
         {...register('password')}
         error={!!errors.password}
         helperText={errors.password?.message}
+        sx={{ 
+          mb: 3,
+          '& .MuiOutlinedInput-root': {
+            bgcolor: 'background.neutral',
+            transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+            '&:hover': {
+              bgcolor: 'background.paper',
+            },
+            '&.Mui-focused': {
+              bgcolor: 'background.paper',
+              boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+            },
+            borderRadius: 1.5,
+          }
+        }}
         slotProps={{
           inputLabel: { shrink: true },
           input: {
@@ -126,17 +154,28 @@ export function SignInView() {
             ),
           },
         }}
-        sx={{ mb: 3 }}
       />
 
       <Button
         fullWidth
         size="large"
         type="submit"
-        color="inherit"
+        color="primary"
         variant="contained"
         disabled={isLoading}
-        sx={{ position: 'relative' }}
+        sx={{ 
+          position: 'relative',
+          py: 1.5,
+          fontSize: '1rem',
+          fontWeight: 700,
+          borderRadius: 1.5,
+          boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}40`,
+          '&:hover': {
+            boxShadow: (theme) => `0 12px 20px 0 ${theme.palette.primary.main}60`,
+            transform: 'translateY(-2px)',
+          },
+          transition: (theme) => theme.transitions.create(['all']),
+        }}
       >
         {isLoading ? (
           <CircularProgress size={24} color="inherit" />
@@ -148,68 +187,194 @@ export function SignInView() {
   );
 
   return (
-    <>
-      <RetroGrid className="fixed inset-0 z-0" />
-      
-      <Box sx={{ mb: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
-        <Logo sx={{ mb: 2 }} />
-        
-        <SparklesText 
-          text="Inicia sesión en Finance" 
-          className="text-2xl font-bold tracking-tight"
-        />
-        
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-          ¿No tienes cuenta?
-          <Link variant="subtitle2" sx={{ ml: 0.5, cursor: 'pointer' }} onClick={() => router.push('/sign-up')}>
-            Regístrate
-          </Link>
-        </Typography>
-      </Box>
-
-      <Box 
-        sx={{ 
-          p: 4, 
-          borderRadius: 2, 
-          bgcolor: 'background.paper',
-          boxShadow: (theme) => theme.customShadows.z8,
-          position: 'relative',
-          zIndex: 1,
-          overflow: 'hidden',
-          border: (theme) => `1px solid ${theme.palette.divider}`,
-        }}
-      >
-        {renderForm}
-        <BorderBeam size={250} duration={12} delay={9} />
-      </Box>
-
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' }, position: 'relative', zIndex: 1 }}>
-        <Typography
-          variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
-        >
-          O
-        </Typography>
-      </Divider>
+    <Box
+      sx={{
+        width: '100%',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        bgcolor: 'background.paper',
+        overflow: 'hidden',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1100,
+      }}
+    >
+      {/* Left Side - Brand Section */}
       <Box
         sx={{
-          gap: 1,
+          flex: { xs: '0 0 auto', md: '1 1 45%' },
+          background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: 'common.white',
           display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          zIndex: 1,
+          p: 5,
+          textAlign: 'center',
+          minHeight: { xs: '300px', md: '100%' },
         }}
       >
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:google" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:github" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:twitter" />
-        </IconButton>
+        <RetroGrid className="opacity-20" />
+        
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <Logo
+            isSingle
+            sx={{
+              width: 120,
+              height: 120,
+              mb: 3,
+              filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.2))',
+              '& img': { width: '100%', height: '100%' }
+            }}
+          />
+          <Typography variant="h2" sx={{ fontWeight: 800, mb: 2, letterSpacing: -1 }}>
+            Finance
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.8, maxWidth: 360, mx: 'auto', lineHeight: 1.6 }}>
+            Gestiona tus finanzas de manera inteligente con IA y automatización desde WhatsApp.
+          </Typography>
+        </Box>
+
+        {/* Cloud/Wave Separator (Visible only on desktop) */}
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            position: 'absolute',
+            right: -2,
+            top: 0,
+            bottom: 0,
+            width: 100,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        >
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 800"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 0C30 100 70 150 70 250C70 350 30 450 30 550C30 650 70 700 70 800H100V0H0Z"
+              fill="white"
+            />
+          </svg>
+        </Box>
+        
+        {/* Mobile Wave Separator */}
+        <Box
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            position: 'absolute',
+            bottom: -1,
+            left: 0,
+            right: 0,
+            height: 60,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        >
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 400 60"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 60C100 40 150 0 250 0C350 0 400 40 400 60H0Z"
+              fill="white"
+            />
+          </svg>
+        </Box>
       </Box>
-    </>
+
+      {/* Right Side - Form Section */}
+      <Box
+        sx={{
+          flex: { xs: '1 1 auto', md: '1 1 55%' },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: { xs: 3, md: 8 },
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Box sx={{ width: '100%', maxWidth: 420 }}>
+          <Box sx={{ mb: 5, textAlign: 'center' }}>
+            <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: -1, mb: 1 }}>
+              Inicia sesión
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              ¿No tienes cuenta?{' '}
+              <Link
+                variant="subtitle2"
+                sx={{ cursor: 'pointer', color: 'primary.main', fontWeight: 700 }}
+                onClick={() => router.push('/sign-up')}
+              >
+                Regístrate ahora
+              </Link>
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              position: 'relative',
+              p: 1,
+              borderRadius: 3,
+              bgcolor: 'background.neutral',
+              boxShadow: (theme) => `
+                inset 0 1px 1px ${theme.palette.common.white},
+                0 10px 20px -10px ${theme.palette.primary.main}40,
+                0 2px 5px rgba(0,0,0,0.05)
+              `,
+            }}
+          >
+            <Box
+              sx={{
+                p: 3,
+                borderRadius: 2.5,
+                bgcolor: 'background.paper',
+                boxShadow: (theme) => theme.customShadows.z12,
+              }}
+            >
+              {renderForm}
+            </Box>
+            <BorderBeam size={250} duration={12} delay={9} />
+          </Box>
+
+          <Divider sx={{ my: 4, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+            <Typography variant="overline" sx={{ color: 'text.disabled' }}>
+              O continuar con
+            </Typography>
+          </Divider>
+
+          <Box sx={{ gap: 2, display: 'flex', justifyContent: 'center' }}>
+            <IconButton
+              sx={{
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                '&:hover': { bgcolor: 'action.hover' }
+              }}
+            >
+              <Iconify width={22} icon="socials:google" />
+            </IconButton>
+            <IconButton
+              sx={{
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                '&:hover': { bgcolor: 'action.hover' }
+              }}
+            >
+              <Iconify width={22} icon="socials:github" />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
+
 }

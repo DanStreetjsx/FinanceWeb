@@ -25,7 +25,6 @@ import { Iconify } from 'src/components/iconify';
 
 import RetroGrid from '../../components/magicui/RetroGrid';
 import { BorderBeam } from '../../components/magicui/BorderBeam';
-import SparklesText from '../../components/magicui/SparklesText';
 
 // ----------------------------------------------------------------------
 
@@ -86,103 +85,284 @@ export function SignUpView() {
   }, [registerUser, router]);
 
   return (
-    <>
-      <RetroGrid className="fixed inset-0 z-0" />
-
-      <Box sx={{ mb: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
-        <Logo sx={{ mb: 2 }} />
-        
-        <SparklesText 
-          text="Crea tu cuenta" 
-          className="text-2xl font-bold tracking-tight"
-        />
-        
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-          ¿Ya tienes cuenta?
-          <Link variant="subtitle2" sx={{ ml: 0.5, cursor: 'pointer' }} onClick={() => router.push('/sign-in')}>
-            Inicia sesión
-          </Link>
-        </Typography>
-      </Box>
-
-      <Box 
-        sx={{ 
-          p: 4, 
-          borderRadius: 2, 
-          bgcolor: 'background.paper',
-          boxShadow: (theme) => theme.customShadows.z8,
+    <Box
+      sx={{
+        width: '100%',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        bgcolor: 'background.paper',
+        overflow: 'hidden',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1100,
+      }}
+    >
+      {/* Left Side - Brand Section */}
+      <Box
+        sx={{
+          flex: { xs: '0 0 auto', md: '1 1 45%' },
+          background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: 'common.white',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           position: 'relative',
-          zIndex: 1,
-          overflow: 'hidden',
-          border: (theme) => `1px solid ${theme.palette.divider}`,
+          p: 5,
+          textAlign: 'center',
+          minHeight: { xs: '300px', md: '100%' },
         }}
       >
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          {!!error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-
-          <TextField
-            fullWidth
-            label="Nombre completo"
-            {...register('name')}
-            error={!!errors.name}
-            helperText={errors.name?.message}
-            sx={{ mb: 3 }}
+        <RetroGrid className="opacity-20" />
+        
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <Logo
+            isSingle
+            sx={{
+              width: 120,
+              height: 120,
+              mb: 3,
+              filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.2))',
+              '& img': { width: '100%', height: '100%' }
+            }}
           />
+          <Typography variant="h2" sx={{ fontWeight: 800, mb: 2, letterSpacing: -1 }}>
+            Finance
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.8, maxWidth: 360, mx: 'auto', lineHeight: 1.6 }}>
+            Únete a la nueva era de la gestión financiera personal. Fácil, rápido y seguro.
+          </Typography>
+        </Box>
 
-          <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-            <FormControl sx={{ minWidth: 100 }}>
-              <Select
-                value={currentPrefix}
-                onChange={(e) => setValue('phone_prefix', e.target.value as string)}
-                sx={{ height: 56 }}
-              >
-                {COUNTRY_CODES.map((country) => (
-                  <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              fullWidth
-              label="Número de Teléfono"
-              {...register('phone_number')}
-              error={!!errors.phone_number}
-              helperText={errors.phone_number?.message}
+        {/* Cloud/Wave Separator (Visible only on desktop) */}
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            position: 'absolute',
+            right: -2,
+            top: 0,
+            bottom: 0,
+            width: 100,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        >
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 800"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 0C30 100 70 150 70 250C70 350 30 450 30 550C30 650 70 700 70 800H100V0H0Z"
+              fill="white"
             />
+          </svg>
+        </Box>
+        
+        {/* Mobile Wave Separator */}
+        <Box
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            position: 'absolute',
+            bottom: -1,
+            left: 0,
+            right: 0,
+            height: 60,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        >
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 400 60"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 60C100 40 150 0 250 0C350 0 400 40 400 60H0Z"
+              fill="white"
+            />
+          </svg>
+        </Box>
+      </Box>
+
+      {/* Right Side - Form Section */}
+      <Box
+        sx={{
+          flex: { xs: '1 1 auto', md: '1 1 55%' },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: { xs: 3, md: 8 },
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Box sx={{ width: '100%', maxWidth: 420 }}>
+          <Box sx={{ mb: 5, textAlign: 'center' }}>
+            <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: -1, mb: 1 }}>
+              Crea tu cuenta
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              ¿Ya tienes cuenta?{' '}
+              <Link
+                variant="subtitle2"
+                sx={{ cursor: 'pointer', color: 'primary.main', fontWeight: 700 }}
+                onClick={() => router.push('/sign-in')}
+              >
+                Inicia sesión
+              </Link>
+            </Typography>
           </Box>
 
-          <TextField
-            fullWidth
-            label="Contraseña"
-            type={showPassword ? 'text' : 'password'}
-            {...register('password')}
-            error={!!errors.password}
-            helperText={errors.password?.message}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
+          <Box
+            sx={{
+              position: 'relative',
+              p: 1,
+              borderRadius: 3,
+              bgcolor: 'background.neutral',
+              boxShadow: (theme) => `
+                inset 0 1px 1px ${theme.palette.common.white},
+                0 10px 20px -10px ${theme.palette.primary.main}40,
+                0 2px 5px rgba(0,0,0,0.05)
+              `,
             }}
-            sx={{ mb: 3 }}
-          />
-
-          <Button
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-            color="inherit"
-            disabled={isLoading}
           >
-            {isLoading ? <CircularProgress size={24} /> : 'Registrarse'}
-          </Button>
+            <Box
+              sx={{
+                p: 3,
+                borderRadius: 2.5,
+                bgcolor: 'background.paper',
+                boxShadow: (theme) => theme.customShadows.z12,
+              }}
+            >
+              <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                {!!error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+
+                <TextField
+                  fullWidth
+                  label="Nombre completo"
+                  {...register('name')}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                  sx={{ 
+                    mb: 2.5,
+                    '& .MuiOutlinedInput-root': {
+                      bgcolor: 'background.neutral',
+                      transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+                      '&:hover': { bgcolor: 'background.paper' },
+                      '&.Mui-focused': {
+                        bgcolor: 'background.paper',
+                        boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+                      },
+                      borderRadius: 1.5,
+                    }
+                  }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
+                  <FormControl sx={{ minWidth: 100 }}>
+                    <Select
+                      value={currentPrefix}
+                      onChange={(e) => setValue('phone_prefix', e.target.value as string)}
+                      sx={{ 
+                        height: 56,
+                        bgcolor: 'background.neutral',
+                        borderRadius: 1.5,
+                      }}
+                    >
+                      {COUNTRY_CODES.map((country) => (
+                        <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <TextField
+                    fullWidth
+                    label="Número de Teléfono"
+                    {...register('phone_number')}
+                    error={!!errors.phone_number}
+                    helperText={errors.phone_number?.message}
+                    sx={{ 
+                      '& .MuiOutlinedInput-root': {
+                        bgcolor: 'background.neutral',
+                        transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+                        '&:hover': { bgcolor: 'background.paper' },
+                        '&.Mui-focused': {
+                          bgcolor: 'background.paper',
+                          boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+                        },
+                        borderRadius: 1.5,
+                      }
+                    }}
+                  />
+                </Box>
+
+                <TextField
+                  fullWidth
+                  label="Contraseña"
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ 
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      bgcolor: 'background.neutral',
+                      transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+                      '&:hover': { bgcolor: 'background.paper' },
+                      '&.Mui-focused': {
+                        bgcolor: 'background.paper',
+                        boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+                      },
+                      borderRadius: 1.5,
+                    }
+                  }}
+                />
+
+                <Button
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={isLoading}
+                  sx={{ 
+                    py: 1.5, 
+                    fontSize: '1rem', 
+                    fontWeight: 700,
+                    borderRadius: 1.5,
+                    boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}40`,
+                    '&:hover': {
+                      boxShadow: (theme) => `0 12px 20px 0 ${theme.palette.primary.main}60`,
+                      transform: 'translateY(-2px)',
+                    },
+                    transition: (theme) => theme.transitions.create(['all']),
+                  }}
+                >
+                  {isLoading ? <CircularProgress size={24} /> : 'Registrarse'}
+                </Button>
+              </Box>
+            </Box>
+            <BorderBeam size={250} duration={12} delay={9} />
+          </Box>
         </Box>
-        <BorderBeam size={250} duration={12} delay={9} />
       </Box>
-    </>
+    </Box>
   );
+
 }

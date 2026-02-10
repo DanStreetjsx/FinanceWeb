@@ -86,14 +86,29 @@ export function AnalyticsWidgetSummary({
   return (
     <Card
       sx={[
-        () => ({
+        {
           p: 3,
-          boxShadow: 'none',
           position: 'relative',
           color: `${color}.darker`,
           backgroundColor: 'common.white',
+          borderRadius: 2.5,
+          border: `1px solid ${theme.palette.divider}`,
+          boxShadow: `
+            inset 0 1px 1px ${theme.palette.common.white},
+            0 10px 20px -10px ${varAlpha(theme.vars.palette[color].mainChannel, 0.24)},
+            0 2px 5px rgba(0,0,0,0.05)
+          `,
           backgroundImage: `linear-gradient(135deg, ${varAlpha(theme.vars.palette[color].lighterChannel, 0.48)}, ${varAlpha(theme.vars.palette[color].lightChannel, 0.48)})`,
-        }),
+          transition: theme.transitions.create(['transform', 'box-shadow']),
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: `
+              inset 0 1px 1px ${theme.palette.common.white},
+              0 20px 40px -20px ${varAlpha(theme.vars.palette[color].mainChannel, 0.32)},
+              0 4px 10px rgba(0,0,0,0.08)
+            `,
+          },
+        },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       {...other}

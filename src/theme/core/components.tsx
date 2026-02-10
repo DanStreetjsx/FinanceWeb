@@ -41,8 +41,24 @@ const MuiCard: Components<Theme>['MuiCard'] = {
     root: ({ theme }) => ({
       zIndex: 0,
       position: 'relative',
-      boxShadow: theme.vars.customShadows.card,
-      borderRadius: theme.shape.borderRadius * 2,
+      borderRadius: theme.shape.borderRadius * 2.5,
+      border: `1px solid ${theme.vars.palette.divider}`,
+      boxShadow: `
+        inset 0 1px 1px ${theme.vars.palette.common.white},
+        0 10px 20px -10px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)},
+        0 2px 5px rgba(0,0,0,0.05)
+      `,
+      transition: theme.transitions.create(['transform', 'box-shadow'], {
+        duration: theme.transitions.duration.shortest,
+      }),
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: `
+          inset 0 1px 1px ${theme.vars.palette.common.white},
+          0 20px 40px -20px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.3)},
+          0 4px 10px rgba(0,0,0,0.08)
+        `,
+      },
     }),
   },
 };
