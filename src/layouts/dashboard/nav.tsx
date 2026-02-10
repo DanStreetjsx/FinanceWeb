@@ -15,8 +15,6 @@ import { RouterLink } from 'src/routes/components';
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { WorkspacesPopover } from '../components/workspaces-popover';
-
 import type { NavItem } from '../nav-config-dashboard';
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
 
@@ -98,24 +96,20 @@ export function NavMobile({
           ...sx,
         },
       }}
-    >
-      <NavContent data={data} slots={slots} workspaces={workspaces} />
-    </Drawer>
+     />
   );
 }
 
 // ----------------------------------------------------------------------
 
-export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
+export function NavContent({ data, slots, sx }: NavContentProps) {
   const pathname = usePathname();
 
   return (
     <>
       <Logo />
 
-      {slots?.topArea}
 
-      <WorkspacesPopover data={workspaces} sx={{ my: 2 }} />
 
       <Scrollbar fillContent>
         <Box

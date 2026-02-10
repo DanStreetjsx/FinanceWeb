@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAuthStatus, useUpdateProfile } from 'src/services/auth/AuthRepositoryHooks';
@@ -20,7 +21,7 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export function ProfileView() {
-  const { user } = useAuthStatus();
+  const { user, isLoading: isUserLoading } = useAuthStatus();
   const { updateProfile, isLoading, error } = useUpdateProfile();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -33,6 +34,27 @@ export function ProfileView() {
     password: '',
     password_confirmation: '',
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.name || '',
+        phone_number: user.phone_number || '',
+        phone_prefix: user.phone_prefix || '51',
+      }));
+    }
+  }, [user]);
+
+  if (isUserLoading) {
+    return (
+      <DashboardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+          <CircularProgress />
+        </Box>
+      </DashboardContent>
+    );
+  }
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });

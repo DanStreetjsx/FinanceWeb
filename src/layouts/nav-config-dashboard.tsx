@@ -15,12 +15,12 @@ export const navData = [
   {
     title: 'Inicio',
     path: '/dashboard',
-    icon: icon('ic-analytics'),
+    icon: icon('ic-user'),
   },
   {
     title: 'Ingresos',
     path: '/dashboard/ingresos',
-    icon: icon('ic-user'),
+    icon: icon('ic-analytics'),
   },
   {
     title: 'Gastos',
@@ -30,7 +30,7 @@ export const navData = [
   {
     title: 'Presupuestos',
     path: '/dashboard/presupuestos',
-    icon: icon('ic-blog'),
+    icon: icon('ic-budget'),
   },
   {
     title: 'Recordatorios',
@@ -40,6 +40,6 @@ export const navData = [
   {
     title: 'Categorías',
     path: '/dashboard/categorias',
-    icon: icon('ic-lock'),
+    icon: icon('ic-categories'),
   },
 ];

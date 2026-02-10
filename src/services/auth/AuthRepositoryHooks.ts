@@ -118,22 +118,9 @@ export function useAuthStatus() {
         return { isAuthenticated: false, user: null };
       }
       
-      // Verificar si hay un usuario en localStorage
-      const userJson = localStorage.getItem('user');
-      if (userJson) {
-        try {
-          const user = JSON.parse(userJson);
-          // Si tenemos un usuario y un token, consideramos que está autenticado
-          return { isAuthenticated: true, user };
-        } catch (e) {
-          console.error('Error al parsear el usuario:', e);
-        }
-      }
-      
-      // Si no hay usuario en localStorage pero hay token, intentar verificar el token
+      // Intentar verificar el token vía API para obtener datos frescos
       try {
-        const authRepo = new AuthRepositoryApi();
-        const response = await authRepo.verifyToken(token);
+        const response = await authRepository.verifyToken(token);
         
         if (response.status === 'success' && response.data) {
           return { isAuthenticated: true, user: response.data };
@@ -141,8 +128,18 @@ export function useAuthStatus() {
       } catch (error) {
         console.error('Error al verificar el token:', error);
       }
+
+      // Si la API falla, intentar usar los datos de localStorage como fallback
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        try {
+          const user = JSON.parse(userJson);
+          return { isAuthenticated: true, user };
+        } catch (e) {
+          console.error('Error al parsear el usuario del localStorage:', e);
+        }
+      }
       
-      // Si llegamos aquí, no está autenticado
       return { isAuthenticated: false, user: null };
     },
     retry: false,

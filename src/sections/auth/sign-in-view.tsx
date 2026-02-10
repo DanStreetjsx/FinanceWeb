@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-// 2. Importaciones de Material-UI (mui)
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -15,14 +14,16 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 
-// 3. Importaciones de rutas (routes)
 import { useRouter } from 'src/routes/hooks';
 
-// 4. Importaciones de servicios/auth (auth)
 import { useLogin } from 'src/services/auth/AuthRepositoryHooks';
 
-// 5. Importaciones de componentes (components)
-import { Iconify } from 'src/components/iconify'
+import { Logo } from 'src/components/logo';
+import { Iconify } from 'src/components/iconify';
+
+import RetroGrid from '../../components/magicui/RetroGrid';
+import { BorderBeam } from '../../components/magicui/BorderBeam';
+import SparklesText from '../../components/magicui/SparklesText';
 // ----------------------------------------------------------------------
 
 // Esquema de validación con Zod
@@ -92,7 +93,7 @@ export function SignInView() {
       <TextField
         fullWidth
         label="Número de Teléfono"
-        placeholder="Ej: 908123564"
+        placeholder="Ej: 983171622 "
         {...register('phone_number')}
         error={!!errors.phone_number}
         helperText={errors.phone_number?.message}
@@ -148,8 +149,16 @@ export function SignInView() {
 
   return (
     <>
-      <Box sx={{ mb: 5, textAlign: 'center' }}>
-        <Typography variant="h5">Inicia sesión en Finance</Typography>
+      <RetroGrid className="fixed inset-0 z-0" />
+      
+      <Box sx={{ mb: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+        <Logo sx={{ mb: 2 }} />
+        
+        <SparklesText 
+          text="Inicia sesión en Finance" 
+          className="text-2xl font-bold tracking-tight"
+        />
+        
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
           ¿No tienes cuenta?
           <Link variant="subtitle2" sx={{ ml: 0.5, cursor: 'pointer' }} onClick={() => router.push('/sign-up')}>
@@ -158,8 +167,23 @@ export function SignInView() {
         </Typography>
       </Box>
 
-      {renderForm}
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+      <Box 
+        sx={{ 
+          p: 4, 
+          borderRadius: 2, 
+          bgcolor: 'background.paper',
+          boxShadow: (theme) => theme.customShadows.z8,
+          position: 'relative',
+          zIndex: 1,
+          overflow: 'hidden',
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        {renderForm}
+        <BorderBeam size={250} duration={12} delay={9} />
+      </Box>
+
+      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' }, position: 'relative', zIndex: 1 }}>
         <Typography
           variant="overline"
           sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
@@ -172,6 +196,8 @@ export function SignInView() {
           gap: 1,
           display: 'flex',
           justifyContent: 'center',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         <IconButton color="inherit">

@@ -1,8 +1,10 @@
 // src/services/api.ts
 import axios from "axios";
 
+import { CONFIG } from "../config/api-config";
+
 const api = axios.create({
-  baseURL: "https://api.smart-general.com/api",
+  baseURL: CONFIG.API_URL,
   headers: { "Content-Type": "application/json" },
 });
 

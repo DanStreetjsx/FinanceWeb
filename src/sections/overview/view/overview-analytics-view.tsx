@@ -97,7 +97,18 @@ export function OverviewAnalyticsView() {
                 percent={0}
                 total={burn_rate.remaining_budget || 0}
                 color={burn_rate.status === 'warning' ? 'warning' : burn_rate.status === 'over_budget' ? 'error' : 'success'}
-                icon={<img alt="IA" src="/assets/icons/glass/ic-glass-brain.svg" />} 
+                icon={
+                  <img 
+                    alt="Estado Presupuesto" 
+                    src={
+                      (burn_rate.remaining_budget ?? null) === null
+                        ? '/assets/icons/glass/ic-glass-pensando.svg'
+                        : burn_rate.remaining_budget < 0
+                        ? '/assets/icons/glass/ic-glass-mal.png'
+                        : '/assets/icons/glass/ic-glass-plus.svg'
+                    } 
+                  />
+                } 
                 chart={{
                   categories: history.map(h => h.month),
                   series: [0, 0, 0, 0, 0, 0],

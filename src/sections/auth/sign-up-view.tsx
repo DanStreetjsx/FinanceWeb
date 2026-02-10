@@ -20,7 +20,12 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useRegister } from 'src/services/auth/AuthRepositoryHooks';
 
+import { Logo } from 'src/components/logo';
 import { Iconify } from 'src/components/iconify';
+
+import RetroGrid from '../../components/magicui/RetroGrid';
+import { BorderBeam } from '../../components/magicui/BorderBeam';
+import SparklesText from '../../components/magicui/SparklesText';
 
 // ----------------------------------------------------------------------
 
@@ -82,79 +87,101 @@ export function SignUpView() {
 
   return (
     <>
-      <Box sx={{ mb: 5, textAlign: 'center' }}>
-        <Typography variant="h5">Crea tu cuenta</Typography>
+      <RetroGrid className="fixed inset-0 z-0" />
+
+      <Box sx={{ mb: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+        <Logo sx={{ mb: 2 }} />
+        
+        <SparklesText 
+          text="Crea tu cuenta" 
+          className="text-2xl font-bold tracking-tight"
+        />
+        
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
           ¿Ya tienes cuenta?
-          <Link variant="subtitle2" sx={{ ml: 0.5 }} href="/sign-in">
+          <Link variant="subtitle2" sx={{ ml: 0.5, cursor: 'pointer' }} onClick={() => router.push('/sign-in')}>
             Inicia sesión
           </Link>
         </Typography>
       </Box>
 
-      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-        {!!error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-
-        <TextField
-          fullWidth
-          label="Nombre completo"
-          {...register('name')}
-          error={!!errors.name}
-          helperText={errors.name?.message}
-          sx={{ mb: 3 }}
-        />
-
-        <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-          <FormControl sx={{ minWidth: 100 }}>
-            <Select
-              value={currentPrefix}
-              onChange={(e) => setValue('phone_prefix', e.target.value)}
-              sx={{ height: 56 }}
-            >
-              {COUNTRY_CODES.map((country) => (
-                <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+      <Box 
+        sx={{ 
+          p: 4, 
+          borderRadius: 2, 
+          bgcolor: 'background.paper',
+          boxShadow: (theme) => theme.customShadows.z8,
+          position: 'relative',
+          zIndex: 1,
+          overflow: 'hidden',
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+          {!!error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
           <TextField
             fullWidth
-            label="Número de Teléfono"
-            {...register('phone_number')}
-            error={!!errors.phone_number}
-            helperText={errors.phone_number?.message}
+            label="Nombre completo"
+            {...register('name')}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+            sx={{ mb: 3 }}
           />
+
+          <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+            <FormControl sx={{ minWidth: 100 }}>
+              <Select
+                value={currentPrefix}
+                onChange={(e) => setValue('phone_prefix', e.target.value as string)}
+                sx={{ height: 56 }}
+              >
+                {COUNTRY_CODES.map((country) => (
+                  <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              fullWidth
+              label="Número de Teléfono"
+              {...register('phone_number')}
+              error={!!errors.phone_number}
+              helperText={errors.phone_number?.message}
+            />
+          </Box>
+
+          <TextField
+            fullWidth
+            label="Contraseña"
+            type={showPassword ? 'text' : 'password'}
+            {...register('password')}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{ mb: 3 }}
+          />
+
+          <Button
+            fullWidth
+            size="large"
+            type="submit"
+            variant="contained"
+            color="inherit"
+            disabled={isLoading}
+          >
+            {isLoading ? <CircularProgress size={24} /> : 'Registrarse'}
+          </Button>
         </Box>
-
-        <TextField
-          fullWidth
-          label="Contraseña"
-          type={showPassword ? 'text' : 'password'}
-          {...register('password')}
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{ mb: 3 }}
-        />
-
-        <Button
-          fullWidth
-          size="large"
-          type="submit"
-          variant="contained"
-          color="inherit"
-          disabled={isLoading}
-        >
-          {isLoading ? <CircularProgress size={24} /> : 'Registrarse'}
-        </Button>
+        <BorderBeam size={250} duration={12} delay={9} />
       </Box>
     </>
   );
