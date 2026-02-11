@@ -1,5 +1,7 @@
 import { CONFIG } from 'src/config-global';
 
+import { Helmet } from 'src/components/helmet';
+
 import { CategoriasView } from 'src/sections/categorias/view';
 
 // ----------------------------------------------------------------------
@@ -7,7 +9,7 @@ import { CategoriasView } from 'src/sections/categorias/view';
 export default function Page() {
   return (
     <>
-      <title> {`Categorías - ${CONFIG.appName}`}</title>
+      <Helmet title={`Categorías - ${CONFIG.appName}`} />
 
       <CategoriasView />
     </>

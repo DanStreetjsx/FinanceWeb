@@ -1,5 +1,7 @@
 import { CONFIG } from 'src/config-global';
 
+import { Helmet } from 'src/components/helmet';
+
 import { OverviewAnalyticsView as DashboardView } from 'src/sections/overview/view';
 
 // ----------------------------------------------------------------------
@@ -7,7 +9,7 @@ import { OverviewAnalyticsView as DashboardView } from 'src/sections/overview/vi
 export default function Page() {
   return (
     <>
-      <title>{`Inicio - ${CONFIG.appName}`}</title>
+      <Helmet title={`Inicio - ${CONFIG.appName}`} />
       <meta
         name="description"
         content="Panel de control de finanzas personales"

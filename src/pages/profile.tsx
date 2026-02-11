@@ -1,5 +1,7 @@
 import { CONFIG } from 'src/config-global';
 
+import { Helmet } from 'src/components/helmet';
+
 import { ProfileView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
@@ -7,7 +9,7 @@ import { ProfileView } from 'src/sections/user/view';
 export default function Page() {
   return (
     <>
-      <title> {`Perfil - ${CONFIG.appName}`}</title>
+      <Helmet title={`Perfil - ${CONFIG.appName}`} />
 
       <ProfileView />
     </>

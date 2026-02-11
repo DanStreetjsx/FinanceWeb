@@ -65,7 +65,7 @@ function IngresosTable({
 
   return (
     <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 500, overflow: 'auto' }}>
-      <Table size="small" stickyHeader sx={{ tableLayout: 'fixed', minWidth: 800 }}>
+      <Table size="small" stickyHeader sx={{ minWidth: 800 }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ fontWeight: 'bold', color: '#637381' }}>DETALLE</TableCell>

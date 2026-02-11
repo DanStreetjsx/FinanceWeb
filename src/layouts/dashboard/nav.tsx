@@ -53,7 +53,11 @@ export function NavDesktop({
         zIndex: 'var(--layout-nav-zIndex)',
         width: 'var(--layout-nav-vertical-width)',
         borderRight: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
-        boxShadow: `inset -1px 0 0 ${theme.vars.palette.common.white}, 4px 0 10px -5px rgba(0,0,0,0.05)`,
+        boxShadow: `
+          inset -1px 0 0 ${theme.vars.palette.common.white},
+          12px 0 24px -12px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.24)},
+          6px 0 12px -6px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.12)}
+        `,
         bgcolor: 'background.neutral',
         [theme.breakpoints.up(layoutQuery)]: {
           display: 'flex',

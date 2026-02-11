@@ -1,5 +1,7 @@
 import { CONFIG } from 'src/config-global';
 
+import { Helmet } from 'src/components/helmet';
+
 import { GastosView } from 'src/sections/gastos/view';
 
 // ----------------------------------------------------------------------
@@ -7,7 +9,7 @@ import { GastosView } from 'src/sections/gastos/view';
 export default function Page() {
   return (
     <>
-      <title>{`Gastos - ${CONFIG.appName}`}</title>
+      <Helmet title={`Gastos - ${CONFIG.appName}`} />
 
       <GastosView />
     </>

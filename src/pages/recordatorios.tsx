@@ -1,5 +1,7 @@
 import { CONFIG } from 'src/config-global';
 
+import { Helmet } from 'src/components/helmet';
+
 import { RecordatoriosView } from 'src/sections/recordatorios/view';
 
 // ----------------------------------------------------------------------
@@ -7,7 +9,7 @@ import { RecordatoriosView } from 'src/sections/recordatorios/view';
 export default function Page() {
   return (
     <>
-      <title> {`Recordatorios - ${CONFIG.appName}`}</title>
+      <Helmet title={`Recordatorios - ${CONFIG.appName}`} />
 
       <RecordatoriosView />
     </>

@@ -92,20 +92,20 @@ export function AnalyticsWidgetSummary({
           color: `${color}.darker`,
           backgroundColor: 'common.white',
           borderRadius: 2.5,
-          border: `1px solid ${theme.palette.divider}`,
+          border: `1px solid ${varAlpha(theme.vars.palette[color].mainChannel, 0.12)}`,
           boxShadow: `
             inset 0 1px 1px ${theme.palette.common.white},
-            0 10px 20px -10px ${varAlpha(theme.vars.palette[color].mainChannel, 0.24)},
-            0 2px 5px rgba(0,0,0,0.05)
+            0 12px 24px -12px ${varAlpha(theme.vars.palette[color].mainChannel, 0.32)},
+            0 4px 8px -2px ${varAlpha(theme.vars.palette[color].mainChannel, 0.16)}
           `,
           backgroundImage: `linear-gradient(135deg, ${varAlpha(theme.vars.palette[color].lighterChannel, 0.48)}, ${varAlpha(theme.vars.palette[color].lightChannel, 0.48)})`,
           transition: theme.transitions.create(['transform', 'box-shadow']),
           '&:hover': {
-            transform: 'translateY(-4px)',
+            transform: 'translateY(-6px)',
             boxShadow: `
               inset 0 1px 1px ${theme.palette.common.white},
-              0 20px 40px -20px ${varAlpha(theme.vars.palette[color].mainChannel, 0.32)},
-              0 4px 10px rgba(0,0,0,0.08)
+              0 24px 48px -12px ${varAlpha(theme.vars.palette[color].mainChannel, 0.4)},
+              0 8px 16px -4px ${varAlpha(theme.vars.palette[color].mainChannel, 0.2)}
             `,
           },
         },

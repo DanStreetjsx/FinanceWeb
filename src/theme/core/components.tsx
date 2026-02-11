@@ -42,21 +42,21 @@ const MuiCard: Components<Theme>['MuiCard'] = {
       zIndex: 0,
       position: 'relative',
       borderRadius: theme.shape.borderRadius * 2.5,
-      border: `1px solid ${theme.vars.palette.divider}`,
+      border: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
       boxShadow: `
         inset 0 1px 1px ${theme.vars.palette.common.white},
-        0 10px 20px -10px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)},
-        0 2px 5px rgba(0,0,0,0.05)
+        0 12px 24px -12px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.16)},
+        0 4px 8px -2px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.08)}
       `,
       transition: theme.transitions.create(['transform', 'box-shadow'], {
         duration: theme.transitions.duration.shortest,
       }),
       '&:hover': {
-        transform: 'translateY(-4px)',
+        transform: 'translateY(-6px)',
         boxShadow: `
           inset 0 1px 1px ${theme.vars.palette.common.white},
-          0 20px 40px -20px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.3)},
-          0 4px 10px rgba(0,0,0,0.08)
+          0 24px 48px -12px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.24)},
+          0 8px 16px -4px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.12)}
         `,
       },
     }),
@@ -95,11 +95,44 @@ const MuiPaper: Components<Theme>['MuiPaper'] = {
 
 const MuiTableCell: Components<Theme>['MuiTableCell'] = {
   styleOverrides: {
+    root: ({ theme }) => ({
+      borderBottom: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.48)}`,
+    }),
     head: ({ theme }) => ({
       fontSize: theme.typography.pxToRem(14),
       color: theme.vars.palette.text.secondary,
       fontWeight: theme.typography.fontWeightSemiBold,
       backgroundColor: theme.vars.palette.background.neutral,
+      borderBottom: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.64)}`,
+    }),
+  },
+};
+
+const MuiTableRow: Components<Theme>['MuiTableRow'] = {
+  styleOverrides: {
+    root: ({ theme }) => ({
+      transition: theme.transitions.create(['background-color'], {
+        duration: theme.transitions.duration.shortest,
+      }),
+      '&:last-of-type': {
+        '& .MuiTableCell-root': {
+          borderBottom: 0,
+        },
+      },
+      '&:hover': {
+        backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+      },
+    }),
+  },
+};
+
+const MuiTableFooter: Components<Theme>['MuiTableFooter'] = {
+  styleOverrides: {
+    root: ({ theme }) => ({
+      '& .MuiTableCell-root': {
+        borderTop: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.48)}`,
+        backgroundColor: theme.vars.palette.background.neutral,
+      },
     }),
   },
 };
@@ -180,7 +213,9 @@ export const components = {
   MuiBackdrop,
   MuiMenuItem,
   MuiCheckbox,
+  MuiTableRow,
   MuiTableCell,
+  MuiTableFooter,
   MuiCardHeader,
   MuiOutlinedInput,
   MuiFormControlLabel,
