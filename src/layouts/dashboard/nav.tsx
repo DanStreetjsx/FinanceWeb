@@ -102,7 +102,9 @@ export function NavMobile({
           ...sx,
         },
       }}
-     />
+    >
+      <NavContent data={data} slots={slots} workspaces={workspaces} />
+    </Drawer>
   );
 }
 
