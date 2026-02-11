@@ -170,7 +170,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
             variant="text"
             onClick={handleLogout}
           >
-            Logout
+            Salir
           </Button>
         </Box>
       </Popover>
