@@ -197,7 +197,15 @@ export function PresupuestosView() {
 
   const totalAllocated = budgetCategories?.reduce((acc: number, curr: any) => acc + parseFloat(curr.allocated_amount), 0) || 0;
 
-  if (loadingBudgets) return <CircularProgress />;
+  if (loadingBudgets) {
+    return (
+      <DashboardContent>
+        <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <CircularProgress />
+        </Box>
+      </DashboardContent>
+    );
+  }
 
   return (
     <DashboardContent>

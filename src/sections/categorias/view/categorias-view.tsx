@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
@@ -94,7 +95,15 @@ export function CategoriasView() {
     }
   };
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) {
+    return (
+      <DashboardContent>
+        <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <CircularProgress />
+        </Box>
+      </DashboardContent>
+    );
+  }
 
   return (
     <DashboardContent>

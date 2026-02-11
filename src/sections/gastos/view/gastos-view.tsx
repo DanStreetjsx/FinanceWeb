@@ -52,7 +52,7 @@ function GastosTable({
 }) {
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 10 }}>
         <CircularProgress />
       </Box>
     );

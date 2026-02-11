@@ -34,6 +34,7 @@ const renderFallback = () => (
       flex: '1 1 auto',
       alignItems: 'center',
       justifyContent: 'center',
+      minHeight: '100vh',
     }}
   >
     <LinearProgress

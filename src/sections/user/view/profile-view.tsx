@@ -49,7 +49,7 @@ export function ProfileView() {
   if (isUserLoading) {
     return (
       <DashboardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
           <CircularProgress />
         </Box>
       </DashboardContent>

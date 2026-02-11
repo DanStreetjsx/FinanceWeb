@@ -1,5 +1,6 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
+import { varAlpha } from 'minimal-shared/utils';
 import { useMemo, useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -120,6 +121,8 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
+              boxShadow: (theme) => `0 16px 32px -4px ${varAlpha(theme.vars.palette.grey['900Channel'], 0.24)}`,
+              border: (theme) => `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
             },
           },
         }}
