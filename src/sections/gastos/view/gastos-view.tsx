@@ -244,7 +244,7 @@ export function GastosView() {
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 2 }}>
-            <Typography variant="subtitle2" color="text.secondary">Sugerencia de IA</Typography>
+            <Typography variant="subtitle2" color="text.secondary">Sugerencia</Typography>
             <Typography variant="body2">{burnRate.health_message || 'No hay datos de presupuesto'}</Typography>
           </Box>
         </Grid>
