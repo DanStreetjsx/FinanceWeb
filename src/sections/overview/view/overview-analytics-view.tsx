@@ -1,7 +1,9 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
+import AlertTitle from '@mui/material/AlertTitle';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -49,6 +51,23 @@ export function OverviewAnalyticsView() {
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
         ¡Bienvenido de nuevo!
       </Typography>
+
+      <Alert 
+        severity="info" 
+        icon={
+          <Box
+            component="img"
+            src="/assets/icons/glass/ic-glass-message.svg"
+            sx={{ width: 24, height: 24 }}
+          />
+        }
+        sx={{ mb: 3, borderRadius: 2, bgcolor: 'background.neutral' }}
+      >
+        <AlertTitle sx={{ fontWeight: 'bold' }}>¡Registra tus gastos por WhatsApp!</AlertTitle>
+        Ya puedes registrar tus movimientos enviando un mensaje. Prueba escribiendo: 
+        <strong> &quot;Almuerzo 25&quot;</strong> o <strong> &quot;+ Sueldo 3000&quot;</strong>. 
+        Revisa tu WhatsApp para encontrar el chat oficial.
+      </Alert>
 
       <Grid container spacing={3} alignItems="stretch">
         {/* Primera fila: 4 cards de métricas */}

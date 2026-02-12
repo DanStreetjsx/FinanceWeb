@@ -9,11 +9,13 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { useRouter } from 'src/routes/hooks';
@@ -43,6 +45,8 @@ const SignUpFormSchema = z.object({
   phone_prefix: z.string().min(1, 'Código es requerido'),
   phone_number: z.string().min(9, 'El número de teléfono debe tener al menos 9 dígitos'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  notify_daily_reminder: z.boolean(),
+  notify_budget_warnings: z.boolean(),
 });
 
 type SignUpFormValues = z.infer<typeof SignUpFormSchema>;
@@ -65,14 +69,23 @@ export function SignUpView() {
       phone_prefix: '51',
       phone_number: '',
       password: '',
+      notify_daily_reminder: true,
+      notify_budget_warnings: true,
     },
   });
 
   const currentPrefix = watch('phone_prefix');
+  const notifyDaily = watch('notify_daily_reminder');
+  const notifyBudget = watch('notify_budget_warnings');
 
   const onSubmit = useCallback(async (data: SignUpFormValues) => {
     try {
-      registerUser(data, {
+      const payload = {
+        ...data,
+        notify_daily_reminder: !!data.notify_daily_reminder,
+        notify_budget_warnings: !!data.notify_budget_warnings,
+      };
+      registerUser(payload, {
         onSuccess: (res) => {
           if (res.status === 'success') {
             router.push('/sign-in');
@@ -320,7 +333,7 @@ export function SignUpView() {
                     ),
                   }}
                   sx={{ 
-                    mb: 3,
+                    mb: 2,
                     '& .MuiOutlinedInput-root': {
                       bgcolor: 'background.neutral',
                       transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
@@ -333,6 +346,37 @@ export function SignUpView() {
                     }
                   }}
                 />
+
+                <Box sx={{ mb: 2.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox 
+                        checked={notifyDaily}
+                        onChange={(e) => setValue('notify_daily_reminder', e.target.checked)}
+                        size="small"
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Recibir recordatorios diarios por WhatsApp
+                      </Typography>
+                    }
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox 
+                        checked={notifyBudget}
+                        onChange={(e) => setValue('notify_budget_warnings', e.target.checked)}
+                        size="small"
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Alertas de presupuesto (Burn Rate)
+                      </Typography>
+                    }
+                  />
+                </Box>
 
                 <Button
                   fullWidth

@@ -37,6 +37,7 @@ type LoginFormValues = z.infer<typeof LoginFormSchema>;
 export function SignInView() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const { login, isLoading, error } = useLogin();
 
   const {
@@ -61,8 +62,10 @@ export function SignInView() {
       }, {
         onSuccess: (response) => {
           if (response.status === 'success') {
-            console.log('Login exitoso, redirigiendo a dashboard');
-            router.push('/dashboard');
+            setLoginSuccess(true);
+            setTimeout(() => {
+              router.push('/dashboard');
+            }, 1000);
           } else {
             console.error('Error en respuesta de login:', response.message);
           }
@@ -86,6 +89,12 @@ export function SignInView() {
       {!!error && (
         <Alert severity="error" sx={{ mb: 3, width: '100%' }}>
           {error}
+        </Alert>
+      )}
+
+      {loginSuccess && (
+        <Alert severity="success" sx={{ mb: 3, width: '100%' }}>
+          ¡Bienvenido de nuevo! Redirigiendo...
         </Alert>
       )}
 
