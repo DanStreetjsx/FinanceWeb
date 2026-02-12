@@ -8,10 +8,12 @@ import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { useRouter } from 'src/routes/hooks';
@@ -43,6 +45,8 @@ export function SignInView() {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
@@ -52,6 +56,8 @@ export function SignInView() {
       rememberMe: true,
     },
   });
+
+  const rememberMe = watch('rememberMe');
 
   const onSubmit = useCallback(async (data: LoginFormValues) => {
     try {
@@ -106,7 +112,7 @@ export function SignInView() {
         error={!!errors.phone_number}
         helperText={errors.phone_number?.message}
         sx={{ 
-          mb: 3,
+          mb: 2,
           '& .MuiOutlinedInput-root': {
             bgcolor: 'background.neutral',
             transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
@@ -125,10 +131,6 @@ export function SignInView() {
         }}
       />
 
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5, alignSelf: 'flex-end', fontWeight: 600 }}>
-        ¿Olvidaste tu contraseña?
-      </Link>
-
       <TextField
         fullWidth
         label="Contraseña"
@@ -137,7 +139,7 @@ export function SignInView() {
         error={!!errors.password}
         helperText={errors.password?.message}
         sx={{ 
-          mb: 3,
+          mb: 1,
           '& .MuiOutlinedInput-root': {
             bgcolor: 'background.neutral',
             transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
@@ -164,6 +166,26 @@ export function SignInView() {
           },
         }}
       />
+
+      <Box sx={{ mb: 2, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <FormControlLabel
+          control={
+            <Checkbox 
+              checked={rememberMe}
+              onChange={(e) => setValue('rememberMe', e.target.checked)}
+              size="small"
+            />
+          }
+          label={
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Recordar contraseña
+            </Typography>
+          }
+        />
+        <Link variant="body2" color="inherit" sx={{ fontWeight: 600, cursor: 'pointer' }}>
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </Box>
 
       <Button
         fullWidth
