@@ -37,6 +37,11 @@ export function AnalyticsSavingsEvolution({ title, subheader, chart, sx, ...othe
     colors: chartColors,
     stroke: { width: 3, curve: 'smooth' },
     xaxis: { categories: chart.categories },
+    yaxis: {
+      labels: {
+        formatter: (value: number) => fCurrency(value),
+      },
+    },
     legend: { show: true },
     tooltip: { 
       y: { 
