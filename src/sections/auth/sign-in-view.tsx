@@ -88,8 +88,8 @@ export function SignInView() {
       onSubmit={handleSubmit(onSubmit)}
       sx={{
         display: 'flex',
-        alignItems: 'flex-end',
         flexDirection: 'column',
+        alignItems: 'stretch',
       }}
     >
       {!!error && (
@@ -112,22 +112,43 @@ export function SignInView() {
         error={!!errors.phone_number}
         helperText={errors.phone_number?.message}
         sx={{ 
-          mb: 2,
+          mb: 2.5,
           '& .MuiOutlinedInput-root': {
             bgcolor: 'background.neutral',
-            transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+            transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
             '&:hover': {
               bgcolor: 'background.paper',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'primary.light',
+              },
             },
             '&.Mui-focused': {
               bgcolor: 'background.paper',
-              boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+              boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}12`,
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderWidth: 1,
+                borderColor: 'primary.main',
+              },
             },
-            borderRadius: 1.5,
+            borderRadius: 2,
+            height: 56,
+          },
+          '& .MuiInputLabel-root': {
+            px: 0.5,
+            '&.Mui-focused': {
+              color: 'primary.main',
+            }
           }
         }}
         slotProps={{
           inputLabel: { shrink: true },
+          input: {
+            startAdornment: (
+              <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
+                <Iconify icon="solar:phone-bold" width={24} sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            ),
+          },
         }}
       />
 
@@ -139,27 +160,46 @@ export function SignInView() {
         error={!!errors.password}
         helperText={errors.password?.message}
         sx={{ 
-          mb: 1,
+          mb: 1.5,
           '& .MuiOutlinedInput-root': {
             bgcolor: 'background.neutral',
-            transition: (theme) => theme.transitions.create(['box-shadow', 'background-color']),
+            transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
             '&:hover': {
               bgcolor: 'background.paper',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'primary.light',
+              },
             },
             '&.Mui-focused': {
               bgcolor: 'background.paper',
-              boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`,
+              boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}12`,
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderWidth: 1,
+                borderColor: 'primary.main',
+              },
             },
-            borderRadius: 1.5,
+            borderRadius: 2,
+            height: 56,
+          },
+          '& .MuiInputLabel-root': {
+            px: 0.5,
+            '&.Mui-focused': {
+              color: 'primary.main',
+            }
           }
         }}
         slotProps={{
           inputLabel: { shrink: true },
           input: {
+            startAdornment: (
+              <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
+                <Iconify icon="solar:lock-password-bold" width={24} sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            ),
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" sx={{ mr: 0.5 }}>
+                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} width={20} />
                 </IconButton>
               </InputAdornment>
             ),
@@ -225,7 +265,7 @@ export function SignInView() {
         display: 'flex',
         flexDirection: { xs: 'column', md: 'row' },
         bgcolor: 'background.paper',
-        overflow: 'hidden',
+        overflow: { xs: 'auto', md: 'hidden' },
         position: 'fixed',
         inset: 0,
         zIndex: 1100,
@@ -240,11 +280,12 @@ export function SignInView() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: { xs: 'flex-start', md: 'center' },
           position: 'relative',
-          p: 5,
+          p: { xs: 4, md: 5 },
+          pt: { xs: 8, md: 5 },
           textAlign: 'center',
-          minHeight: { xs: '300px', md: '100%' },
+          minHeight: { xs: '240px', md: '100%' },
         }}
       >
         <RetroGrid className="opacity-20" />
@@ -253,17 +294,17 @@ export function SignInView() {
           <Logo
             isSingle
             sx={{
-              width: 120,
-              height: 120,
-              mb: 3,
+              width: { xs: 80, md: 120 },
+              height: { xs: 80, md: 120 },
+              mb: { xs: 2, md: 3 },
               filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.2))',
               '& img': { width: '100%', height: '100%' }
             }}
           />
-          <Typography variant="h2" sx={{ fontWeight: 800, mb: 2, letterSpacing: -1 }}>
+          <Typography variant="h2" sx={{ fontWeight: 800, mb: 1, letterSpacing: -1, display: { xs: 'none', md: 'block' } }}>
             Finance
           </Typography>
-          <Typography variant="body1" sx={{ opacity: 0.8, maxWidth: 360, mx: 'auto', lineHeight: 1.6 }}>
+          <Typography variant="body1" sx={{ opacity: 0.8, maxWidth: 360, mx: 'auto', lineHeight: 1.6, display: { xs: 'none', md: 'block' } }}>
             Gestiona tus finanzas de manera inteligente con IA y automatización desde WhatsApp.
           </Typography>
         </Box>
@@ -295,34 +336,6 @@ export function SignInView() {
             />
           </svg>
         </Box>
-        
-        {/* Mobile Wave Separator */}
-        <Box
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            position: 'absolute',
-            bottom: -1,
-            left: 0,
-            right: 0,
-            height: 60,
-            zIndex: 2,
-            pointerEvents: 'none',
-          }}
-        >
-          <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 400 60"
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0 60C100 40 150 0 250 0C350 0 400 40 400 60H0Z"
-              fill="white"
-            />
-          </svg>
-        </Box>
       </Box>
 
       {/* Right Side - Form Section */}
@@ -330,16 +343,29 @@ export function SignInView() {
         sx={{
           flex: { xs: '1 1 auto', md: '1 1 55%' },
           display: 'flex',
-          alignItems: 'center',
+          alignItems: { xs: 'flex-start', md: 'center' },
           justifyContent: 'center',
-          p: { xs: 3, md: 8 },
-          bgcolor: 'background.paper',
+          p: { xs: 0, md: 8 },
+          bgcolor: { xs: 'transparent', md: 'background.paper' },
+          position: 'relative',
+          mt: { xs: -6, md: 0 },
+          zIndex: 3,
         }}
       >
-        <Box sx={{ width: '100%', maxWidth: 420 }}>
-          <Box sx={{ mb: 5, textAlign: 'center' }}>
+        <Box 
+          sx={{ 
+            width: '100%', 
+            maxWidth: 420,
+            bgcolor: 'background.paper',
+            borderRadius: { xs: '32px 32px 0 0', md: 0 },
+            p: { xs: 4, md: 0 },
+            minHeight: { xs: 'calc(100vh - 180px)', md: 'auto' },
+            boxShadow: { xs: '0 -10px 40px rgba(0,0,0,0.1)', md: 'none' },
+          }}
+        >
+          <Box sx={{ mb: 4, textAlign: 'center' }}>
             <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: -1, mb: 1 }}>
-              Inicia sesión
+              ¡Hola de nuevo!
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               ¿No tienes cuenta?{' '}
@@ -356,27 +382,32 @@ export function SignInView() {
           <Box
             sx={{
               position: 'relative',
-              p: 1,
+              p: { xs: 0, md: 1 },
               borderRadius: 3,
-              bgcolor: 'background.neutral',
-              boxShadow: (theme) => `
-                inset 0 1px 1px ${theme.palette.common.white},
-                0 10px 20px -10px ${theme.palette.primary.main}40,
-                0 2px 5px rgba(0,0,0,0.05)
-              `,
+              bgcolor: { xs: 'transparent', md: 'background.neutral' },
+              boxShadow: (theme) => ({
+                xs: 'none',
+                md: `
+                  inset 0 1px 1px ${theme.palette.common.white},
+                  0 10px 20px -10px ${theme.palette.primary.main}40,
+                  0 2px 5px rgba(0,0,0,0.05)
+                `
+              }),
             }}
           >
             <Box
               sx={{
-                p: 3,
+                p: { xs: 0, md: 3 },
                 borderRadius: 2.5,
                 bgcolor: 'background.paper',
-                boxShadow: (theme) => theme.customShadows.z12,
+                boxShadow: (theme) => ({ xs: 'none', md: theme.customShadows.z12 }),
               }}
             >
               {renderForm}
             </Box>
-            <BorderBeam size={250} duration={12} delay={9} />
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <BorderBeam size={250} duration={12} delay={9} />
+            </Box>
           </Box>
 
           <Divider sx={{ my: 4, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
@@ -385,22 +416,39 @@ export function SignInView() {
             </Typography>
           </Divider>
 
-          <Box sx={{ gap: 2, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ gap: 3, display: 'flex', justifyContent: 'center' }}>
             <IconButton
               sx={{
+                width: 48,
+                height: 48,
+                color: '#DB4437',
                 border: (theme) => `1px solid ${theme.palette.divider}`,
-                '&:hover': { bgcolor: 'action.hover' }
+                '&:hover': { bgcolor: 'rgba(219, 68, 55, 0.04)', borderColor: '#DB4437' }
               }}
             >
-              <Iconify width={22} icon="socials:google" />
+              <Iconify width={24} icon="socials:google" />
             </IconButton>
             <IconButton
               sx={{
+                width: 48,
+                height: 48,
+                color: '#1877F2',
                 border: (theme) => `1px solid ${theme.palette.divider}`,
-                '&:hover': { bgcolor: 'action.hover' }
+                '&:hover': { bgcolor: 'rgba(24, 119, 242, 0.04)', borderColor: '#1877F2' }
               }}
             >
-              <Iconify width={22} icon="socials:github" />
+              <Iconify width={24} icon="socials:facebook" />
+            </IconButton>
+            <IconButton
+              sx={{
+                width: 48,
+                height: 48,
+                color: '#000000',
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)', borderColor: '#000000' }
+              }}
+            >
+              <Iconify width={24} icon="logos:apple" />
             </IconButton>
           </Box>
         </Box>
