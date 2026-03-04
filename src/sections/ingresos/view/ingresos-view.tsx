@@ -10,6 +10,7 @@ import Alert from '@mui/material/Alert';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Snackbar from '@mui/material/Snackbar';
 import TableRow from '@mui/material/TableRow';
@@ -31,8 +32,11 @@ import { fCurrency } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAuthStatus } from 'src/services/auth/AuthRepositoryHooks';
-import { useCategories } from 'src/services/categorias/CategoriasRepositoryHooks';
 import { useDashboardData } from 'src/services/analiticas/AnaliticasRepositoryHooks';
+import { 
+  useCategories, 
+  useCreateCategory 
+} from 'src/services/categorias/CategoriasRepositoryHooks';
 import { 
   useTransactions, 
   useCreateTransaction, 
@@ -149,6 +153,7 @@ export function IngresosView() {
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction();
   const deleteMutation = useDeleteTransaction();
+  const createCategoryMutation = useCreateCategory();
 
   const [form, setForm] = useState({
     detail: '',
@@ -160,6 +165,8 @@ export function IngresosView() {
 
   const [editingItem, setEditingItem] = useState<any>(null);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
   const handleAddIngreso = () => {
     if (!form.detail || !form.amount || !form.category_id) {
@@ -180,6 +187,28 @@ export function IngresosView() {
         setNotification({ open: true, message: 'Ingreso añadido correctamente', severity: 'success' });
         setForm({ detail: '', amount: '', category_id: '', source: 'Efectivo', operation_at: new Date().toISOString().split('T')[0] });
         refetch();
+      },
+      onError: (err: any) => {
+        setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+      }
+    });
+  };
+
+  const handleCreateCategory = () => {
+    if (!newCategoryName.trim()) return;
+
+    createCategoryMutation.mutate({
+      name: newCategoryName,
+      type: 'income',
+    }, {
+      onSuccess: (newCat: any) => {
+        setNotification({ open: true, message: 'Categoría creada', severity: 'success' });
+        setNewCategoryName('');
+        setOpenCategoryDialog(false);
+        // Seleccionar automáticamente la nueva categoría
+        if (newCat?.id) {
+          setForm({ ...form, category_id: newCat.id.toString() });
+        }
       },
       onError: (err: any) => {
         setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
@@ -223,6 +252,22 @@ export function IngresosView() {
   const metrics = dashData?.metrics || { income: 0, expense: 0, balance: 0 };
   
   const metodosPago = ['Efectivo', 'WhatsApp', 'Yape', 'Plin', 'BCP', 'Transferencia Bancaria', 'Venta'];
+
+  const commonInputStyles = {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(0, 0, 0, 0.23)',
+      borderWidth: '1px',
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(0, 0, 0, 0.87)',
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'primary.main',
+      borderWidth: '2px',
+    },
+    bgcolor: 'background.paper',
+    borderRadius: 1,
+  };
 
   return (
     <DashboardContent maxWidth="xl" sx={{ width: '100%', px: { xs: 1, md: 3 }, maxWidth: 'none' }}>
@@ -284,7 +329,7 @@ export function IngresosView() {
                 size="small" 
                 value={form.detail} 
                 onChange={(e) => setForm({ ...form, detail: e.target.value })} 
-                sx={{ flexGrow: 1, minWidth: 200 }}
+                sx={{ flexGrow: 1, minWidth: 200, ...commonInputStyles }}
               />
               <TextField 
                 label="Monto" 
@@ -292,21 +337,39 @@ export function IngresosView() {
                 size="small" 
                 value={form.amount} 
                 onChange={(e) => setForm({ ...form, amount: e.target.value })} 
-                sx={{ width: 120 }}
+                sx={{ width: 120, ...commonInputStyles }}
               />
-              <FormControl size="small" sx={{ minWidth: 150 }}>
-                <Select
-                  value={form.category_id}
-                  onChange={(e) => setForm({ ...form, category_id: e.target.value as string })}
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>Categoría</MenuItem>
-                  {categories?.map((cat: any) => (
-                    <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl size="small" sx={{ minWidth: 150 }}>
+              <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                <FormControl size="small" sx={{ minWidth: 150, ...commonInputStyles }}>
+                  <Select
+                    value={form.category_id}
+                    onChange={(e) => setForm({ ...form, category_id: e.target.value as string })}
+                    displayEmpty
+                  >
+                    <MenuItem value="" disabled>Categoría</MenuItem>
+                    {categories?.map((cat: any) => (
+                      <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Tooltip title="Agregar categoría" arrow placement="top">
+                  <Button 
+                    size="small" 
+                    onClick={() => setOpenCategoryDialog(true)}
+                    sx={{ 
+                      minWidth: 40, 
+                      height: 40, 
+                      p: 0,
+                      borderColor: 'divider',
+                      '&:hover': { borderColor: 'text.disabled' }
+                    }}
+                    variant="outlined"
+                  >
+                    +
+                  </Button>
+                </Tooltip>
+              </Box>
+              <FormControl size="small" sx={{ minWidth: 150, ...commonInputStyles }}>
                 <Select
                   value={form.source}
                   onChange={(e) => setForm({ ...form, source: e.target.value as string })}
@@ -321,19 +384,21 @@ export function IngresosView() {
                 size="small" 
                 value={form.operation_at} 
                 onChange={(e) => setForm({ ...form, operation_at: e.target.value })} 
+                sx={{ ...commonInputStyles }}
               />
               <Button 
                 variant="contained" 
                 onClick={handleAddIngreso}
                 disabled={createMutation.isPending}
+                sx={{ height: 40 }}
               >
                 Añadir
               </Button>
             </Box>
 
             <Typography variant="h6" sx={{ mb: 2 }}>Filtros de Listado</Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3, p: 2, bgcolor: '#f9fafb', borderRadius: 1 }}>
-              <FormControl size="small" sx={{ minWidth: 150 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3, p: 2, bgcolor: 'background.neutral', borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
+              <FormControl size="small" sx={{ minWidth: 150, ...commonInputStyles }}>
                 <Select
                   value={filters.category_id}
                   onChange={(e) => setFilters({ ...filters, category_id: e.target.value as string })}
@@ -345,7 +410,7 @@ export function IngresosView() {
                   ))}
                 </Select>
               </FormControl>
-              <FormControl size="small" sx={{ minWidth: 150 }}>
+              <FormControl size="small" sx={{ minWidth: 150, ...commonInputStyles }}>
                 <Select
                   value={filters.source}
                   onChange={(e) => setFilters({ ...filters, source: e.target.value as string })}
@@ -364,6 +429,7 @@ export function IngresosView() {
                   size="small" 
                   value={filters.start_date} 
                   onChange={(e) => setFilters({ ...filters, start_date: e.target.value })} 
+                  sx={{ ...commonInputStyles }}
                 />
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -373,6 +439,7 @@ export function IngresosView() {
                   size="small" 
                   value={filters.end_date} 
                   onChange={(e) => setFilters({ ...filters, end_date: e.target.value })} 
+                  sx={{ ...commonInputStyles }}
                 />
               </Box>
               {isFetching && <CircularProgress size={20} sx={{ ml: 1 }} />}
@@ -447,6 +514,32 @@ export function IngresosView() {
           <Button onClick={() => setEditingItem(null)}>Cancelar</Button>
           <Button variant="contained" onClick={handleUpdateIngreso} disabled={updateMutation.isPending}>
             Guardar Cambios
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialogo para Nueva Categoría */}
+      <Dialog open={openCategoryDialog} onClose={() => setOpenCategoryDialog(false)} fullWidth maxWidth="xs">
+        <DialogTitle>Nueva Categoría de Ingreso</DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          <TextField
+            fullWidth
+            autoFocus
+            label="Nombre de la categoría"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleCreateCategory()}
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCategoryDialog(false)}>Cancelar</Button>
+          <Button 
+            variant="contained" 
+            onClick={handleCreateCategory} 
+            disabled={createCategoryMutation.isPending || !newCategoryName.trim()}
+          >
+            {createCategoryMutation.isPending ? <CircularProgress size={24} /> : 'Crear'}
           </Button>
         </DialogActions>
       </Dialog>
