@@ -60,26 +60,20 @@ export function SignInView() {
   const rememberMe = watch('rememberMe');
 
   const onSubmit = useCallback(async (data: LoginFormValues) => {
-    try {
-      login({
-        phone_number: data.phone_number,
-        password: data.password,
-        rememberMe: data.rememberMe
-      }, {
-        onSuccess: (response) => {
-          if (response.status === 'success') {
-            setLoginSuccess(true);
-            setTimeout(() => {
-              router.push('/dashboard');
-            }, 1000);
-          } else {
-            console.error('Error en respuesta de login:', response.message);
-          }
+    login({
+      phone_number: data.phone_number,
+      password: data.password,
+      rememberMe: data.rememberMe
+    }, {
+      onSuccess: (response) => {
+        if (response.status === 'success') {
+          setLoginSuccess(true);
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 1000);
         }
-      });
-    } catch (err) {
-      console.error('Error en el login:', err);
-    }
+      }
+    });
   }, [login, router]);
 
   const renderForm = (

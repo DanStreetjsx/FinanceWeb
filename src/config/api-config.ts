@@ -16,9 +16,11 @@ const API_CONFIG = {
 
 // Detectar el entorno actual (Vite utiliza import.meta.env.MODE)
 const currentMode = import.meta.env.MODE === 'production' ? 'production' : 'development';
+const defaultApiUrl = API_CONFIG[currentMode].BASE_URL;
+const envApiUrl = import.meta.env.VITE_API_URL?.trim();
 
 export const CONFIG = {
-  API_URL: API_CONFIG[currentMode].BASE_URL,
+  API_URL: envApiUrl || defaultApiUrl,
   IS_PRODUCTION: currentMode === 'production',
   IS_DEVELOPMENT: currentMode === 'development',
 };

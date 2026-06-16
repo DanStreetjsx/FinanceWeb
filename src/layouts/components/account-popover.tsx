@@ -27,6 +27,11 @@ export type AccountPopoverProps = IconButtonProps & {
   }[];
 };
 
+type LocalStorageUser = {
+  name?: string;
+  phone_number?: string;
+};
+
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -43,14 +48,14 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     try {
       const userStr = localStorage.getItem('user');
       if (userStr) {
-        const user = JSON.parse(userStr);
+        const user = JSON.parse(userStr) as LocalStorageUser;
         setUserData({
           name: user.name || '',
           phone_number: user.phone_number || '',
         });
       }
-    } catch (error) {
-      console.error('Error al cargar datos del usuario:', error);
+    } catch {
+      // Si falla el parseo, se usan valores vacíos por defecto.
     }
   }, []);
 

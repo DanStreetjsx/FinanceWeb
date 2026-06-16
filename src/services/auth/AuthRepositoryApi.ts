@@ -12,6 +12,7 @@ import type {
   AuthResponse,
   IAuthRepository,
   RegisterRequest,
+  UpdateProfileRequest,
   ResetPasswordRequest,
   RequestResetPasswordRequest
 } from './AuthRepository';
@@ -36,18 +37,20 @@ export class AuthRepositoryApi implements IAuthRepository {
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           
-          try {
-            const refreshToken = localStorage.getItem(TOKEN_KEY);
-            if (refreshToken) {
+          const token = localStorage.getItem(TOKEN_KEY);
+          if (token) {
+            try {
               const response = await this.refreshToken();
               if (response.status === 'success' && response.data?.token) {
                 localStorage.setItem(TOKEN_KEY, response.data.token);
                 return api(originalRequest);
               }
+            } catch {
+              // Ignorado: en cualquier fallo limpiamos sesión local debajo.
             }
-          } catch {
-            this.clearAuthData();
           }
+
+          this.clearAuthData();
         }
         return Promise.reject(error);
       }
@@ -70,15 +73,11 @@ export class AuthRepositoryApi implements IAuthRepository {
       const authData = response.data;
       
       if (authData && authData.token) {
-        // Imprimir la respuesta para depuración
-        console.log("Respuesta de login exitosa:", authData);
-        
         // Guardar token en localStorage
         localStorage.setItem(TOKEN_KEY, authData.token);
         
         // Guardar usuario completo
         if (authData.user) {
-          console.log("Guardando usuario en localStorage:", authData.user);
           localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
         }
 
@@ -95,14 +94,13 @@ export class AuthRepositoryApi implements IAuthRepository {
         data: null
       };
     } catch (error) {
-      console.error("Error en login:", error);
       return this.handleError(error);
     }
   }
 
   async register(request: RegisterRequest): Promise<ApiResponse<void>> {
     try {
-      const response = await api.post<void>(
+      await api.post<void>(
         `${AuthEndpoints.REGISTER}`,
         request
       );
@@ -165,8 +163,8 @@ export class AuthRepositoryApi implements IAuthRepository {
   async logout(): Promise<void> {
     try {
       await api.post(`${AuthEndpoints.LOGOUT}`);
-    } catch (error) {
-      console.error("Error al cerrar sesión en el servidor:", error);
+    } catch {
+      // Si falla el logout remoto igual limpiamos sesión local.
     } finally {
       // Siempre limpiar datos locales
       localStorage.removeItem(TOKEN_KEY);
@@ -174,7 +172,7 @@ export class AuthRepositoryApi implements IAuthRepository {
     }
   }
 
-  async updateProfile(request: any): Promise<ApiResponse<User>> {
+  async updateProfile(request: UpdateProfileRequest): Promise<ApiResponse<User>> {
     try {
       const response = await api.put<ApiResponse<User>>(
         `${AuthEndpoints.UPDATE_PROFILE}`,
@@ -217,17 +215,18 @@ export class AuthRepositoryApi implements IAuthRepository {
     }
   }
 
-  private handleError(error: unknown): ApiResponse<any> {
+  private handleError<T>(error: unknown): ApiResponse<T> {
     if (error && typeof error === 'object' && 'isAxiosError' in error && error.isAxiosError) {
       const axiosError = error as AxiosError;
-      const response = axiosError.response?.data as ApiResponse<any>;
+      const response = axiosError.response?.data as ApiResponse<unknown> | undefined;
       return {
         message: response?.message || axiosError.message,
         status: 'error',
         error: {
           code: axiosError.response?.status?.toString() || 'UNKNOWN',
           details: response?.error?.details
-        }
+        },
+        data: null,
       };
     }
     
@@ -237,7 +236,8 @@ export class AuthRepositoryApi implements IAuthRepository {
       error: {
         code: 'UNKNOWN',
         details: error instanceof Error ? error.message : undefined
-      }
+      },
+      data: null,
     };
   }
 }

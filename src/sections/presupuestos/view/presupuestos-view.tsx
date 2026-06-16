@@ -1,4 +1,7 @@
-import { useMemo, useState } from 'react';
+import type { Category } from 'src/services/categorias/CategoriasRepository';
+import type { Budget, BudgetCategory } from 'src/services/presupuestos/PresupuestosRepository';
+
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -27,6 +30,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { fCurrency } from 'src/utils/format-number';
 
+import { ADS_CONFIG } from 'src/config/ads-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useCategories } from 'src/services/categorias/CategoriasRepositoryHooks';
 import { 
@@ -41,14 +45,19 @@ import {
 } from 'src/services/presupuestos/PresupuestosRepositoryHooks';
 
 import { Iconify } from 'src/components/iconify';
+import { AdSenseSlot } from 'src/components/ads';
 
 // ----------------------------------------------------------------------
+
+type NotificationState = { open: boolean; message: string; severity: 'success' | 'error' };
+
+const getErrorMessage = (error: unknown) => (error instanceof Error ? error.message : 'Error inesperado');
 
 export function PresupuestosView() {
   const { data: budgets, isLoading: loadingBudgets } = useBudgets();
   const { data: allCategories } = useCategories({ type: 'expense' });
   
-  const [selectedBudget, setSelectedBudget] = useState<any>(null);
+  const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
   const { data: budgetCategories } = useBudgetCategories(selectedBudget?.id || 0);
 
   const createBudget = useCreateBudget();
@@ -61,22 +70,22 @@ export function PresupuestosView() {
   const [openBudgetDialog, setOpenBudgetDialog] = useState(false);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
 
-  const [editingBudget, setEditingBudget] = useState<any>(null);
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
   const [budgetForm, setBudgetForm] = useState({ name: '', start_date: '', end_date: '' });
 
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<BudgetCategory | null>(null);
   const [categoryForm, setCategoryForm] = useState({ category_id: '', allocated_amount: '' });
 
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [notification, setNotification] = useState<NotificationState>({ open: false, message: '', severity: 'success' });
 
   // Seleccionar el primer presupuesto por defecto
-  useMemo(() => {
+  useEffect(() => {
     if (budgets?.length && !selectedBudget) {
       setSelectedBudget(budgets[0]);
     }
   }, [budgets, selectedBudget]);
 
-  const handleOpenBudgetDialog = (budget?: any) => {
+  const handleOpenBudgetDialog = (budget?: Budget) => {
     if (budget) {
       setEditingBudget(budget);
       setBudgetForm({
@@ -102,8 +111,8 @@ export function PresupuestosView() {
           setEditingBudget(null);
           setNotification({ open: true, message: 'Presupuesto actualizado correctamente', severity: 'success' });
         },
-        onError: (err: any) => {
-          setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+        onError: (err: unknown) => {
+          setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
         }
       });
     } else {
@@ -113,14 +122,14 @@ export function PresupuestosView() {
           setBudgetForm({ name: '', start_date: '', end_date: '' });
           setNotification({ open: true, message: 'Presupuesto creado correctamente', severity: 'success' });
         },
-        onError: (err: any) => {
-          setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+        onError: (err: unknown) => {
+          setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
         }
       });
     }
   };
 
-  const handleOpenCategoryDialog = (item?: any) => {
+  const handleOpenCategoryDialog = (item?: BudgetCategory) => {
     if (item) {
       setEditingCategory(item);
       setCategoryForm({
@@ -151,8 +160,8 @@ export function PresupuestosView() {
           setEditingCategory(null);
           setNotification({ open: true, message: 'Asignación actualizada correctamente', severity: 'success' });
         },
-        onError: (err: any) => {
-          setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+        onError: (err: unknown) => {
+          setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
         }
       });
     } else {
@@ -168,8 +177,8 @@ export function PresupuestosView() {
           setCategoryForm({ category_id: '', allocated_amount: '' });
           setNotification({ open: true, message: 'Categoría asignada correctamente', severity: 'success' });
         },
-        onError: (err: any) => {
-          setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+        onError: (err: unknown) => {
+          setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
         }
       });
     }
@@ -195,7 +204,7 @@ export function PresupuestosView() {
     });
   };
 
-  const totalAllocated = budgetCategories?.reduce((acc: number, curr: any) => acc + parseFloat(curr.allocated_amount), 0) || 0;
+  const totalAllocated = budgetCategories?.reduce((acc, curr) => acc + Number(curr.allocated_amount), 0) || 0;
 
   if (loadingBudgets) {
     return (
@@ -221,12 +230,20 @@ export function PresupuestosView() {
         </Button>
       </Stack>
 
+      <Box sx={{ mb: 4 }}>
+        <AdSenseSlot
+          slot={ADS_CONFIG.PRESUPUESTOS_INLINE_SLOT || ADS_CONFIG.DASHBOARD_TOP_SLOT}
+          label="Publicidad"
+          minHeight={110}
+        />
+      </Box>
+
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h6" mb={2}>Mis Presupuestos</Typography>
             <Stack spacing={1}>
-              {budgets?.map((budget: any) => (
+              {budgets?.map((budget) => (
                 <Button
                   key={budget.id}
                   variant={selectedBudget?.id === budget.id ? 'contained' : 'outlined'}
@@ -286,7 +303,7 @@ export function PresupuestosView() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {budgetCategories?.map((item: any) => (
+                    {budgetCategories?.map((item) => (
                       <TableRow key={item.id}>
                         <TableCell>{item.category?.name || 'Cargando...'}</TableCell>
                         <TableCell align="right">{fCurrency(item.allocated_amount)}</TableCell>
@@ -361,7 +378,7 @@ export function PresupuestosView() {
                 label="Categoría"
                 onChange={(e) => setCategoryForm({ ...categoryForm, category_id: e.target.value })}
               >
-                {allCategories?.map((cat: any) => (
+                {allCategories?.map((cat: Category) => (
                   <MenuItem key={cat.id} value={cat.id.toString()}>{cat.name}</MenuItem>
                 ))}
               </Select>

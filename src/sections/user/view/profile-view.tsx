@@ -1,3 +1,5 @@
+import type { UpdateProfileRequest } from 'src/services/auth/AuthRepository';
+
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
@@ -20,6 +22,14 @@ import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
+type ProfileFormData = {
+  name: string;
+  phone_number: string;
+  phone_prefix: string;
+  password: string;
+  password_confirmation: string;
+};
+
 export function ProfileView() {
   const { user, isLoading: isUserLoading } = useAuthStatus();
   const { updateProfile, isLoading, error } = useUpdateProfile();
@@ -27,7 +37,7 @@ export function ProfileView() {
   const [showPassword, setShowPassword] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: user?.name || '',
     phone_number: user?.phone_number || '',
     phone_prefix: user?.phone_prefix || '51',
@@ -56,14 +66,14 @@ export function ProfileView() {
     );
   }
 
-  const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [field]: event.target.value });
+  const handleChange = <K extends keyof ProfileFormData>(field: K) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
-    const requestData: any = {
+    const requestData: UpdateProfileRequest = {
       name: formData.name,
       phone_number: formData.phone_number,
       phone_prefix: formData.phone_prefix,

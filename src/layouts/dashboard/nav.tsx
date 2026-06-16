@@ -198,12 +198,10 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
               );
             })}
           </Box>
+
+          {slots?.bottomArea && <Box sx={{ pt: 2 }}>{slots.bottomArea}</Box>}
         </Box>
       </Scrollbar>
-
-      {slots?.bottomArea}
-
-
     </>
   );
 }

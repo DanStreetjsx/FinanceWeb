@@ -8,6 +8,9 @@ import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 
 import { _notifications } from 'src/_mock';
+import { ADS_CONFIG } from 'src/config/ads-config';
+
+import { AdSenseSlot } from 'src/components/ads';
 
 import { NavMobile, NavDesktop } from './nav';
 import { layoutClasses } from '../core/classes';
@@ -105,7 +108,9 @@ export function DashboardLayout({
 
   const renderFooter = () => null;
 
-  const renderMain = () => <MainSection {...slotProps?.main}>{children}</MainSection>;
+  const renderMain = () => (
+    <MainSection {...slotProps?.main}>{children}</MainSection>
+  );
 
   return (
     <LayoutSection
@@ -117,7 +122,22 @@ export function DashboardLayout({
        * @Sidebar
        *************************************** */
       sidebarSection={
-        <NavDesktop data={navData} layoutQuery={layoutQuery} workspaces={_workspaces} />
+        <NavDesktop
+          data={navData}
+          layoutQuery={layoutQuery}
+          workspaces={_workspaces}
+          slots={{
+            bottomArea: (
+              <Box sx={{ pt: 1.5 }}>
+                <AdSenseSlot
+                  slot={ADS_CONFIG.DASHBOARD_BOTTOM_SLOT || ADS_CONFIG.DASHBOARD_TOP_SLOT}
+                  label="Publicidad"
+                  minHeight={110}
+                />
+              </Box>
+            ),
+          }}
+        />
       }
       /** **************************************
        * @Footer

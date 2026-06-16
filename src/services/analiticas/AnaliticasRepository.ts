@@ -6,11 +6,20 @@ export interface BurnRate {
   days_in_period: number;
   projected_monthly: number;
   budget_status: 'ok' | 'warning' | 'critical';
+  status?: 'ok' | 'warning' | 'over_budget';
+  has_budget?: boolean;
+  total_allocated?: number;
+  health_message?: string;
   remaining_budget?: number;
   days_until_budget_exhausted?: number;
 }
 
 export interface DashboardData {
+  period?: {
+    month: string;
+    start_date: string;
+    end_date: string;
+  };
   metrics: {
     income: number;
     expense: number;
@@ -29,7 +38,7 @@ export interface DashboardData {
     label: string;
     value: number;
   }>;
-  burn_rate: any; // Usar el tipo de BurnRate si es necesario
+  burn_rate: BurnRate;
 }
 
 export const AnalyticsEndpoints = {
@@ -39,5 +48,5 @@ export const AnalyticsEndpoints = {
 
 export interface IAnaliticasRepository {
   getBurnRate(): Promise<BurnRate>;
-  getDashboardData(): Promise<DashboardData>;
+  getDashboardData(month?: string): Promise<DashboardData>;
 }

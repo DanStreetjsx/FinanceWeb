@@ -17,8 +17,10 @@ export class AnaliticasRepositoryApi implements IAnaliticasRepository {
     return response.data;
   }
 
-  async getDashboardData(): Promise<DashboardData> {
-    const response = await api.get<DashboardData>(AnalyticsEndpoints.DASHBOARD);
+  async getDashboardData(month?: string): Promise<DashboardData> {
+    const response = await api.get<DashboardData>(AnalyticsEndpoints.DASHBOARD, {
+      params: month ? { month } : undefined,
+    });
     return response.data;
   }
 }

@@ -1,3 +1,5 @@
+import type { Reminder } from 'src/services/recordatorios/RecordatoriosRepository';
+
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -27,6 +29,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { fDate } from 'src/utils/format-time';
 import { fCurrency } from 'src/utils/format-number';
 
+import { ADS_CONFIG } from 'src/config/ads-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { 
   useReminders, 
@@ -36,8 +39,19 @@ import {
 } from 'src/services/recordatorios/RecordatoriosRepositoryHooks';
 
 import { Iconify } from 'src/components/iconify';
+import { AdSenseSlot } from 'src/components/ads';
 
 // ----------------------------------------------------------------------
+
+type ReminderForm = {
+  title: string;
+  amount: string;
+  due_date: string;
+  frequency: 'once' | 'weekly' | 'monthly';
+  is_completed: boolean;
+};
+
+type NotificationState = { open: boolean; message: string; severity: 'success' | 'error' };
 
 export function RecordatoriosView() {
   const { data: reminders, isLoading } = useReminders();
@@ -47,23 +61,17 @@ export function RecordatoriosView() {
   const deleteReminder = useDeleteReminder();
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingReminder, setEditingReminder] = useState<any>(null);
-  const [form, setForm] = useState<{
-    title: string;
-    amount: string;
-    due_date: string;
-    frequency: 'once' | 'weekly' | 'monthly';
-    is_completed: boolean;
-  }>({
+  const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
+  const [form, setForm] = useState<ReminderForm>({
     title: '',
     amount: '',
     due_date: '',
     frequency: 'once',
     is_completed: false
   });
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [notification, setNotification] = useState<NotificationState>({ open: false, message: '', severity: 'success' });
 
-  const handleOpenDialog = (reminder?: any) => {
+  const handleOpenDialog = (reminder?: Reminder) => {
     if (reminder) {
       setEditingReminder(reminder);
       setForm({
@@ -154,6 +162,14 @@ export function RecordatoriosView() {
         </Button>
       </Stack>
 
+      <Box sx={{ mb: 4 }}>
+        <AdSenseSlot
+          slot={ADS_CONFIG.RECORDATORIOS_INLINE_SLOT || ADS_CONFIG.DASHBOARD_TOP_SLOT}
+          label="Publicidad"
+          minHeight={110}
+        />
+      </Box>
+
       <Grid container spacing={3}>
         <Grid size={{ xs: 12 }}>
           <Card sx={{ p: 3 }}>
@@ -170,7 +186,7 @@ export function RecordatoriosView() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {reminders?.map((reminder: any) => (
+                  {reminders?.map((reminder) => (
                     <TableRow key={reminder.id}>
                       <TableCell>
                         <Typography variant="subtitle2">{reminder.title}</Typography>
@@ -254,7 +270,7 @@ export function RecordatoriosView() {
               select
               label="Frecuencia"
               value={form.frequency}
-              onChange={(e) => setForm({ ...form, frequency: e.target.value as any })}
+              onChange={(e) => setForm({ ...form, frequency: e.target.value as ReminderForm['frequency'] })}
             >
               <MenuItem value="once">Una vez</MenuItem>
               <MenuItem value="weekly">Semanal</MenuItem>

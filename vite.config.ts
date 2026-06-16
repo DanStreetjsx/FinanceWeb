@@ -1,7 +1,7 @@
 import path from 'path';
 import checker from 'vite-plugin-checker';
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import { defineConfig } from 'vitest/config';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +30,10 @@ export default defineConfig({
         replacement: path.resolve(process.cwd(), 'src/$1'),
       },
     ],
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
   },
   server: { port: PORT, host: true },
   preview: { port: PORT, host: true },

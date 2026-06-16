@@ -1,3 +1,5 @@
+import type { Category } from 'src/services/categorias/CategoriasRepository';
+
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -21,6 +23,7 @@ import DialogActions from '@mui/material/DialogActions';
 import TableContainer from '@mui/material/TableContainer';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import { ADS_CONFIG } from 'src/config/ads-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { 
   useCategories, 
@@ -30,6 +33,7 @@ import {
 } from 'src/services/categorias/CategoriasRepositoryHooks';
 
 import { Iconify } from 'src/components/iconify';
+import { AdSenseSlot } from 'src/components/ads';
 
 // ----------------------------------------------------------------------
 
@@ -41,14 +45,14 @@ export function CategoriasView() {
   const deleteCategory = useDeleteCategory();
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [form, setForm] = useState({ name: '', type: 'expense' as 'expense' | 'income' | 'both' });
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
   const incomeCategories = categories?.filter(cat => cat.type === 'income' || cat.type === 'both') || [];
   const expenseCategories = categories?.filter(cat => cat.type === 'expense' || cat.type === 'both') || [];
 
-  const handleOpenDialog = (type: 'expense' | 'income', category?: any) => {
+  const handleOpenDialog = (type: 'expense' | 'income', category?: Category) => {
     if (category) {
       setEditingCategory(category);
       setForm({ name: category.name, type: category.type });
@@ -110,6 +114,14 @@ export function CategoriasView() {
       <Typography variant="h4" sx={{ mb: 5 }}>
         Categorías
       </Typography>
+
+      <Box sx={{ mb: 4 }}>
+        <AdSenseSlot
+          slot={ADS_CONFIG.CATEGORIAS_INLINE_SLOT || ADS_CONFIG.DASHBOARD_TOP_SLOT}
+          label="Publicidad"
+          minHeight={110}
+        />
+      </Box>
 
       <Grid container spacing={3}>
         {/* Columna Gastos */}

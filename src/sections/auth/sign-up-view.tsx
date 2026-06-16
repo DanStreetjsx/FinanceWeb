@@ -80,22 +80,18 @@ export function SignUpView() {
   const notifyBudget = watch('notify_budget_warnings');
 
   const onSubmit = useCallback(async (data: SignUpFormValues) => {
-    try {
-      const payload = {
-        ...data,
-        notify_daily_reminder: !!data.notify_daily_reminder,
-        notify_budget_warnings: !!data.notify_budget_warnings,
-      };
-      registerUser(payload, {
-        onSuccess: (res) => {
-          if (res.status === 'success') {
-            router.push('/sign-in');
-          }
+    const payload = {
+      ...data,
+      notify_daily_reminder: !!data.notify_daily_reminder,
+      notify_budget_warnings: !!data.notify_budget_warnings,
+    };
+    registerUser(payload, {
+      onSuccess: (res) => {
+        if (res.status === 'success') {
+          router.push('/sign-in');
         }
-      });
-    } catch (err) {
-      console.error('Error al intentar registrarse:', err);
-    }
+      }
+    });
   }, [registerUser, router]);
 
   return (

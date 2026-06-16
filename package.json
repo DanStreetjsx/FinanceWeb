@@ -15,13 +15,15 @@
     "fm:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "fm:fix": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "fix:all": "npm run lint:fix && npm run fm:fix",
-    "clean": "rm -rf node_modules .next out dist build",
+    "clean": "node -e \"const fs=require('fs');['node_modules','.next','out','dist','build'].forEach((d)=>fs.rmSync(d,{recursive:true,force:true}));\"",
     "re:dev": "yarn clean && yarn install && yarn dev",
     "re:build": "yarn clean && yarn install && yarn build",
     "re:build-npm": "npm run clean && npm install && npm run build",
     "tsc:dev": "yarn dev & yarn tsc:watch",
     "tsc:watch": "tsc --noEmit --watch",
-    "tsc:print": "npx tsc --showConfig"
+    "tsc:print": "npx tsc --showConfig",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "engines": {
     "node": ">=20"
@@ -61,6 +63,9 @@
   "devDependencies": {
     "@eslint/js": "^9.23.0",
     "@tailwindcss/postcss": "^4.1.18",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.14.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
@@ -75,12 +80,14 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.0.0",
+    "jsdom": "^29.0.2",
     "postcss": "^8.5.6",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
     "vite": "^6.2.5",
-    "vite-plugin-checker": "^0.9.1"
+    "vite-plugin-checker": "^0.9.1",
+    "vitest": "^4.1.5"
   }
 }

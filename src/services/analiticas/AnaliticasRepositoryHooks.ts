@@ -15,8 +15,8 @@ export const useBurnRate = () =>
     queryFn: () => analiticasRepository.getBurnRate(),
   });
 
-export const useDashboardData = () =>
+export const useDashboardData = (month?: string) =>
   useQuery({
-    queryKey: [QUERY_KEYS.DASHBOARD_DATA],
-    queryFn: () => analiticasRepository.getDashboardData(),
+    queryKey: [QUERY_KEYS.DASHBOARD_DATA, month ?? 'current'],
+    queryFn: () => analiticasRepository.getDashboardData(month),
   });

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { AuthRepositoryApi } from './AuthRepositoryApi';
+import { authRepository } from './AuthRepositoryApi';
 
 import type {
   LoginRequest,
-  IAuthRepository,
   RegisterRequest,
   UpdateProfileRequest,
   ResetPasswordRequest,
@@ -16,12 +15,6 @@ const QUERY_KEYS = {
   USER_DATA: 'user-data',
   AUTH_STATUS: 'auth-status',
 };
-
-// Constante para la clave de refresh token
-const REFRESH_TOKEN_KEY = 'refreshToken';
-
-// Instancia del repositorio de autenticación
-const authRepository: IAuthRepository = new AuthRepositoryApi();
 
 // Hook para login
 export const useLogin = () => {
@@ -110,7 +103,7 @@ export const useUpdateProfile = () => {
 export function useAuthStatus() {
   const queryClient = useQueryClient();
   const { isLoading, data } = useQuery({
-    queryKey: ['auth-status'],
+    queryKey: [QUERY_KEYS.AUTH_STATUS],
     queryFn: async () => {
       // Verificar si hay un token en localStorage
       const token = localStorage.getItem('token');
@@ -118,28 +111,20 @@ export function useAuthStatus() {
         return { isAuthenticated: false, user: null };
       }
       
-      // Intentar verificar el token vía API para obtener datos frescos
+      // Verificar token vía API. Si falla, limpiar sesión local para evitar estados inconsistentes.
       try {
         const response = await authRepository.verifyToken(token);
         
         if (response.status === 'success' && response.data) {
           return { isAuthenticated: true, user: response.data };
         }
-      } catch (error) {
-        console.error('Error al verificar el token:', error);
+      } catch {
+        // Si falla verificación, limpiamos sesión local más abajo.
       }
 
-      // Si la API falla, intentar usar los datos de localStorage como fallback
-      const userJson = localStorage.getItem('user');
-      if (userJson) {
-        try {
-          const user = JSON.parse(userJson);
-          return { isAuthenticated: true, user };
-        } catch (e) {
-          console.error('Error al parsear el usuario del localStorage:', e);
-        }
-      }
-      
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
       return { isAuthenticated: false, user: null };
     },
     retry: false,
@@ -152,7 +137,7 @@ export function useAuthStatus() {
     isLoading,
     isAuthenticated,
     user: data?.user || null,
-    refetch: () => queryClient.invalidateQueries({ queryKey: ['auth-status'] })
+    refetch: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTH_STATUS] })
   };
 }
 

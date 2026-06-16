@@ -1,3 +1,6 @@
+import type { Category } from 'src/services/categorias/CategoriasRepository';
+import type { Transaction } from 'src/services/transacciones/TransaccionesRepository';
+
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -27,6 +30,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { fCurrency } from 'src/utils/format-number';
 
+import { ADS_CONFIG } from 'src/config/ads-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAuthStatus } from 'src/services/auth/AuthRepositoryHooks';
 import { useDashboardData } from 'src/services/analiticas/AnaliticasRepositoryHooks';
@@ -41,7 +45,14 @@ import {
   useDeleteTransaction 
 } from 'src/services/transacciones/TransaccionesRepositoryHooks';
 
+import { AdSenseSlot } from 'src/components/ads';
+
 // ----------------------------------------------------------------------
+
+type TransactionRow = Transaction & { description?: string };
+type NotificationState = { open: boolean; message: string; severity: 'success' | 'error' };
+
+const getErrorMessage = (error: unknown) => (error instanceof Error ? error.message : 'Error inesperado');
 
 function GastosTable({ 
   rows, 
@@ -49,10 +60,10 @@ function GastosTable({
   onDelete,
   onEdit 
 }: { 
-  rows: any[], 
+  rows: TransactionRow[], 
   isLoading: boolean,
   onDelete: (id: number) => void,
-  onEdit: (row: any) => void
+  onEdit: (row: TransactionRow) => void
 }) {
   if (isLoading) {
     return (
@@ -111,7 +122,7 @@ function GastosTable({
             <TableCell sx={{ fontWeight: 'bold' }}>TOTAL</TableCell>
             <TableCell colSpan={2} />
             <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-              {fCurrency(rows.reduce((sum, row) => sum + (parseFloat(row.amount) || 0), 0))}
+              {fCurrency(rows.reduce((sum, row) => sum + Number(row.amount || 0), 0))}
             </TableCell>
             <TableCell colSpan={2} />
           </TableRow>
@@ -156,8 +167,8 @@ export function GastosView() {
     operation_at: new Date().toISOString().split('T')[0]
   });
 
-  const [editingItem, setEditingItem] = useState<any>(null);
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [editingItem, setEditingItem] = useState<TransactionRow | null>(null);
+  const [notification, setNotification] = useState<NotificationState>({ open: false, message: '', severity: 'success' });
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
 
@@ -181,8 +192,8 @@ export function GastosView() {
         setForm({ detail: '', amount: '', category_id: '', source: 'Efectivo', operation_at: new Date().toISOString().split('T')[0] });
         refetch();
       },
-      onError: (err: any) => {
-        setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+      onError: (err: unknown) => {
+        setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
       }
     });
   };
@@ -194,7 +205,7 @@ export function GastosView() {
       name: newCategoryName,
       type: 'expense',
     }, {
-      onSuccess: (newCat: any) => {
+      onSuccess: (newCat: Category) => {
         setNotification({ open: true, message: 'Categoría creada', severity: 'success' });
         setNewCategoryName('');
         setOpenCategoryDialog(false);
@@ -203,8 +214,8 @@ export function GastosView() {
           setForm({ ...form, category_id: newCat.id.toString() });
         }
       },
-      onError: (err: any) => {
-        setNotification({ open: true, message: `Error: ${err.message}`, severity: 'error' });
+      onError: (err: unknown) => {
+        setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
       }
     });
   };
@@ -216,7 +227,7 @@ export function GastosView() {
       id: editingItem.id,
       data: {
         detail: editingItem.detail,
-        amount: parseFloat(editingItem.amount),
+        amount: Number(editingItem.amount),
         category_id: editingItem.category_id,
         source: editingItem.source,
         operation_at: editingItem.operation_at,
@@ -242,7 +253,7 @@ export function GastosView() {
   };
 
   const metrics = dashData?.metrics || { income: 0, expense: 0, balance: 0 };
-  const burnRate = dashData?.burn_rate || { remaining_budget: 0, health_message: '' };
+  const burnRate = dashData?.burn_rate || { total_allocated: 0, remaining_budget: 0, health_message: '' };
 
   const metodosPago = ['Efectivo', 'WhatsApp', 'Yape', 'Plin', 'BCP', 'Tarjeta Crédito', 'Tarjeta Débito', 'Transferencia'];
 
@@ -295,6 +306,14 @@ export function GastosView() {
         </Grid>
       </Grid>
 
+      <Box sx={{ mb: 4 }}>
+        <AdSenseSlot
+          slot={ADS_CONFIG.GASTOS_INLINE_SLOT || ADS_CONFIG.DASHBOARD_TOP_SLOT}
+          label="Publicidad"
+          minHeight={110}
+        />
+      </Box>
+
       <Grid container spacing={3}>
         <Grid size={{ xs: 12 }}>
           <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1 }}>
@@ -323,7 +342,7 @@ export function GastosView() {
                     displayEmpty
                   >
                     <MenuItem value="" disabled>Categoría</MenuItem>
-                    {categories?.map((cat: any) => (
+                    {categories?.map((cat) => (
                       <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
                     ))}
                   </Select>
@@ -381,7 +400,7 @@ export function GastosView() {
                   displayEmpty
                 >
                   <MenuItem value="">Todas las categorías</MenuItem>
-                  {categories?.map((cat: any) => (
+                  {categories?.map((cat) => (
                     <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
                   ))}
                 </Select>
@@ -447,21 +466,29 @@ export function GastosView() {
               fullWidth
               label="Detalle" 
               value={editingItem?.detail || ''} 
-              onChange={(e) => setEditingItem({ ...editingItem, detail: e.target.value })} 
+              onChange={(e) =>
+                setEditingItem((prev) => (prev ? { ...prev, detail: e.target.value } : prev))
+              }
             />
             <TextField 
               fullWidth
               label="Monto" 
               type="number" 
               value={editingItem?.amount || ''} 
-              onChange={(e) => setEditingItem({ ...editingItem, amount: e.target.value })} 
+              onChange={(e) =>
+                setEditingItem((prev) => (prev ? { ...prev, amount: Number(e.target.value) } : prev))
+              }
             />
             <FormControl fullWidth>
               <Select
                 value={editingItem?.category_id || ''}
-                onChange={(e) => setEditingItem({ ...editingItem, category_id: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem((prev) =>
+                    prev ? { ...prev, category_id: Number(e.target.value) } : prev
+                  )
+                }
               >
-                {categories?.map((cat: any) => (
+                {categories?.map((cat) => (
                   <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
                 ))}
               </Select>
@@ -469,7 +496,11 @@ export function GastosView() {
             <FormControl fullWidth>
               <Select
                 value={editingItem?.source || ''}
-                onChange={(e) => setEditingItem({ ...editingItem, source: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem((prev) =>
+                    prev ? { ...prev, source: e.target.value as string } : prev
+                  )
+                }
               >
                 {metodosPago.map((metodo) => (
                   <MenuItem key={metodo} value={metodo}>{metodo}</MenuItem>
@@ -482,7 +513,9 @@ export function GastosView() {
               label="Fecha"
               InputLabelProps={{ shrink: true }}
               value={editingItem?.operation_at || ''} 
-              onChange={(e) => setEditingItem({ ...editingItem, operation_at: e.target.value })} 
+              onChange={(e) =>
+                setEditingItem((prev) => (prev ? { ...prev, operation_at: e.target.value } : prev))
+              }
             />
           </Box>
         </DialogContent>

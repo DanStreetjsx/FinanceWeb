@@ -32,14 +32,36 @@ const LOCALES = [
 const DAYS_OF_WEEK = [
   { value: 0, label: 'Domingo' },
   { value: 1, label: 'Lunes' },
+  { value: 2, label: 'Martes' },
+  { value: 3, label: 'Miércoles' },
+  { value: 4, label: 'Jueves' },
+  { value: 5, label: 'Viernes' },
+  { value: 6, label: 'Sábado' },
 ];
+
+type SettingsFormData = {
+  default_currency: string;
+  locale: string;
+  start_of_week: number;
+  phone_prefix: string;
+  notify_daily_reminder: boolean;
+  notify_budget_warnings: boolean;
+};
+
+type FormChangeEvent = {
+  target: {
+    type?: string;
+    value: string | number;
+    checked?: boolean;
+  };
+};
 
 export function SettingsView() {
   const { data: settings, isLoading: settingsLoading } = useSettings();
   const { mutate: updateSettings, isPending: updating } = useUpdateSettings();
 
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SettingsFormData>({
     default_currency: 'PEN',
     locale: 'es-PE',
     start_of_week: 1,
@@ -61,9 +83,9 @@ export function SettingsView() {
     }
   }, [settings]);
 
-  const handleChange = (field: string) => (event: any) => {
-    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-    setFormData({ ...formData, [field]: value });
+  const handleChange = <K extends keyof SettingsFormData>(field: K) => (event: FormChangeEvent) => {
+    const value = (event.target.type === 'checkbox' ? event.target.checked : event.target.value) as SettingsFormData[K];
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
@@ -181,7 +203,7 @@ export function SettingsView() {
                 sx={{ bgcolor: 'background.paper', borderRadius: 1 }}
               />
               <Typography variant="caption" color="primary.darker">
-                * Actualmente configurado para: 🇵🇪 Perú (+51)
+                * Prefijo actual configurado: +{formData.phone_prefix}
               </Typography>
             </Stack>
           </Card>

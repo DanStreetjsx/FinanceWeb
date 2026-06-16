@@ -1,4 +1,5 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
+import type { Reminder } from 'src/services/recordatorios/RecordatoriosRepository';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useMemo, useState, useCallback } from 'react';
@@ -53,16 +54,19 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
     if (!reminders) return [];
     
     return reminders
-      .filter((r: any) => r.is_active)
-      .map((r: any) => ({
+      .filter((r: Reminder & { is_active?: boolean }) =>
+        typeof r.is_active === 'boolean' ? r.is_active : !r.is_completed
+      )
+      .map((r) => ({
         id: r.id.toString(),
         title: r.title,
         description: `Vence el ${fDate(r.due_date)} - ${fCurrency(r.amount)}`,
         type: 'reminder',
         avatarUrl: null,
         postedAt: r.due_date,
-        isUnRead: true, // Por ahora los tratamos como no leídos si están activos
-      }));
+        isUnRead: true,
+      }))
+      .sort((a, b) => new Date(a.postedAt ?? 0).getTime() - new Date(b.postedAt ?? 0).getTime());
   }, [reminders]);
 
   const [notifications, setNotifications] = useState(data);

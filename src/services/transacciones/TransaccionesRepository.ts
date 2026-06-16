@@ -1,5 +1,19 @@
 // src/services/transacciones/TransaccionesRepository.ts
 
+import type { Category } from 'src/services/categorias/CategoriasRepository';
+
+export interface Merchant {
+  id: number;
+  name: string;
+}
+
+export interface TransactionSplit {
+  id: number;
+  amount: number;
+  category_id?: number;
+  category?: Category;
+}
+
 export interface Transaction {
   id: number;
   user_id: number;
@@ -13,9 +27,9 @@ export interface Transaction {
   status: string;
   merchant_name?: string;
   source?: string;
-  category?: any;
-  merchant?: any;
-  splits?: any[];
+  category?: Category;
+  merchant?: Merchant;
+  splits?: TransactionSplit[];
   created_at: string;
   updated_at: string;
 }

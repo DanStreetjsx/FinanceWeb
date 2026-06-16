@@ -2,13 +2,10 @@ import 'src/global.css';
 
 import { useEffect } from 'react';
 
-import Fab from '@mui/material/Fab';
-
 import { usePathname } from 'src/routes/hooks';
 
 import { ThemeProvider } from 'src/theme/theme-provider';
-
-import { Iconify } from './components/iconify';
+import { ADS_CONFIG, ADS_ENABLED } from 'src/config/ads-config';
 
 // ----------------------------------------------------------------------
 
@@ -18,25 +15,7 @@ type AppProps = {
 
 export default function App({ children }: AppProps) {
   useScrollToTop();
-
-  const githubButton = () => (
-    <Fab
-      size="medium"
-      aria-label="Github"
-      href="https://github.com/William310304"
-      sx={{
-        zIndex: 9,
-        right: 20,
-        bottom: 20,
-        width: 48,
-        height: 48,
-        position: 'fixed',
-        bgcolor: 'grey.800',
-      }}
-    >
-      <Iconify width={24} icon="socials:github" sx={{ '--color': 'white' }} />
-    </Fab>
-  );
+  useAdSenseScript();
 
   return (
     <ThemeProvider>
@@ -55,4 +34,27 @@ function useScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+function useAdSenseScript() {
+  useEffect(() => {
+    if (!ADS_ENABLED || !ADS_CONFIG.ADSENSE_SCRIPT_URL) {
+      return;
+    }
+
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      `script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]`
+    );
+
+    if (existingScript) {
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.src = ADS_CONFIG.ADSENSE_SCRIPT_URL;
+
+    document.head.appendChild(script);
+  }, []);
 }
