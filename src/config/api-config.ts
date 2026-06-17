@@ -10,7 +10,7 @@ const API_CONFIG = {
     BASE_URL: 'http://localhost:8000/api',
   },
   production: {
-    BASE_URL: 'https://api.smart-general.com/api',
+    BASE_URL: 'https://api.financ.site/api',
   },
 };
 

@@ -135,6 +135,13 @@ export function OverviewAnalyticsView() {
   const dominantCategoryName = dominantCategory?.label || 'Sin categoría dominante';
   const selectedYear = Number(selectedMonth.slice(0, 4));
   const monthPickerOpen = Boolean(monthPickerAnchorEl);
+  const panelSx = {
+    height: '100%',
+    borderRadius: '8px',
+    bgcolor: 'background.paper',
+    border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
+    boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
+  };
 
   const handleOpenMonthPicker = (event: MouseEvent<HTMLElement>) => {
     setMonthPickerYear(Number.isNaN(selectedYear) ? new Date().getFullYear() : selectedYear);
@@ -157,6 +164,7 @@ export function OverviewAnalyticsView() {
         position: 'relative',
         overflow: 'hidden',
         pb: { xs: 4, md: 6 },
+        bgcolor: alpha(theme.palette.grey[500], 0.06),
       }}
     >
       <Box
@@ -192,10 +200,10 @@ export function OverviewAnalyticsView() {
         <Card
           sx={{
             p: { xs: 2.5, md: 3.5 },
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.18)}`,
+            borderRadius: '8px',
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.24)}`,
             background: `linear-gradient(130deg, ${alpha(theme.palette.primary.light, 0.22)} 0%, ${alpha(theme.palette.info.light, 0.18)} 50%, ${alpha(theme.palette.background.paper, 0.96)} 100%)`,
-            boxShadow: `0 18px 38px -24px ${alpha(theme.palette.primary.main, 0.45)}`,
+            boxShadow: `0 18px 38px -22px ${alpha(theme.palette.primary.main, 0.55)}`,
           }}
         >
           <Grid container spacing={2.5} alignItems="center">
@@ -234,9 +242,10 @@ export function OverviewAnalyticsView() {
               <Box
                 sx={{
                   p: 2,
-                  borderRadius: 2,
+                  borderRadius: '8px',
                   bgcolor: alpha(theme.palette.background.paper, 0.85),
-                  border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`,
+                  border: `1px solid ${alpha(theme.palette.grey[500], 0.28)}`,
+                  boxShadow: `0 12px 28px -22px ${alpha(theme.palette.grey[900], 0.45)}`,
                   backdropFilter: 'blur(6px)',
                 }}
               >
@@ -278,7 +287,7 @@ export function OverviewAnalyticsView() {
                   </Button>
                 </Stack>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, display: 'block' }}>
-                  Periodo API: {data?.period?.start_date || `${selectedMonth}-01`} a {data?.period?.end_date || 'fin de mes'}
+                  Periodo : {data?.period?.start_date || `${selectedMonth}-01`} a {data?.period?.end_date || 'fin de mes'}
                 </Typography>
               </Box>
             </Grid>
@@ -297,7 +306,7 @@ export function OverviewAnalyticsView() {
                 mt: 1,
                 p: 2,
                 width: 320,
-                borderRadius: 2,
+                borderRadius: '8px',
                 border: `1px solid ${alpha(theme.palette.primary.main, 0.18)}`,
                 background: `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.lighter, 0.18)} 100%)`,
               }
@@ -362,9 +371,10 @@ export function OverviewAnalyticsView() {
             />
           }
           sx={{
-            borderRadius: 2.5,
-            border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`,
+            borderRadius: '8px',
+            border: `1px solid ${alpha(theme.palette.info.main, 0.28)}`,
             bgcolor: alpha(theme.palette.info.lighter, 0.6),
+            boxShadow: `0 14px 30px -24px ${alpha(theme.palette.info.dark, 0.5)}`,
           }}
         >
           <AlertTitle sx={{ fontWeight: 'bold' }}>¡Registra tus gastos por WhatsApp!</AlertTitle>
@@ -456,6 +466,7 @@ export function OverviewAnalyticsView() {
           <Stack spacing={3}>
             <AnalyticsCurrentVisits
               title="Gastos por Categoría"
+              sx={panelSx}
               chart={{
                 series: categoriesBreakdown.length > 0 
                   ? categoriesBreakdown.map(c => ({ label: c.label, value: c.value }))
@@ -464,6 +475,7 @@ export function OverviewAnalyticsView() {
             />
             <AnalyticsCurrentVisits
               title="Progreso del Presupuesto"
+              sx={panelSx}
               chart={{
                 series: hasBudget ? [
                   { label: 'Gastado', value: totalSpent },
@@ -479,6 +491,7 @@ export function OverviewAnalyticsView() {
             <AnalyticsSavingsEvolution
               title="Evolución de Ahorros"
               subheader="Balance acumulado mes a mes"
+              sx={panelSx}
               chart={{
                 categories: history.map(h => h.month),
                 series: [
@@ -493,6 +506,7 @@ export function OverviewAnalyticsView() {
                 <AnalyticsSpendingComparison
                   title="Comparativa de Gastos"
                   subheader="Mes actual vs Mes anterior"
+                  sx={panelSx}
                   chart={{
                     categories: ['Gastos'],
                     series: [
@@ -505,6 +519,7 @@ export function OverviewAnalyticsView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <AnalyticsWebsiteVisits
                   title="Ingresos vs Gastos"
+                  sx={panelSx}
                   chart={{
                     categories: history.map(h => h.month),
                     series: [
@@ -528,7 +543,9 @@ export function OverviewAnalyticsView() {
                 sx={{
                   p: 3,
                   height: '100%',
-                  borderRadius: 2,
+                  borderRadius: '8px',
+                  border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
+                  boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
                   background: 'linear-gradient(135deg, #fffdf7 0%, #f5fbff 100%)',
                 }}
               >
@@ -566,6 +583,7 @@ export function OverviewAnalyticsView() {
               <AnalyticsCurrentSubject
                 title="Concentración del gasto"
                 subheader="Distribución actual vs objetivo equilibrado"
+                sx={panelSx}
                 chart={{
                   categories: topCategoryLabels.length > 0 ? topCategoryLabels : ['Sin datos'],
                   series:
@@ -597,7 +615,9 @@ export function OverviewAnalyticsView() {
                 sx={{
                   p: 3,
                   height: '100%',
-                  borderRadius: 2,
+                  borderRadius: '8px',
+                  border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
+                  boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
                   background: 'linear-gradient(180deg, #fff9ed 0%, #ffffff 100%)',
                 }}
               >
@@ -666,6 +686,7 @@ export function OverviewAnalyticsView() {
               <AnalyticsWebsiteVisits
                 title="Top categorías por monto"
                 subheader="Dónde se está concentrando el gasto real"
+                sx={panelSx}
                 chart={{
                   categories: topCategoryLabels.length > 0 ? topCategoryLabels : ['Sin datos'],
                   series: [{ name: 'Gasto', data: topCategoryValues.length > 0 ? topCategoryValues : [0] }],
@@ -682,6 +703,7 @@ export function OverviewAnalyticsView() {
               <AnalyticsWebsiteVisits
                 title="Ritmo de gasto mensual"
                 subheader="Compara cada mes contra tu promedio"
+                sx={panelSx}
                 chart={{
                   categories: historyCategories,
                   series: [
@@ -702,6 +724,7 @@ export function OverviewAnalyticsView() {
           <AnalyticsConversionRates
             title="Historial de Movimientos"
             subheader="Ingresos y gastos de los últimos 6 meses"
+            sx={panelSx}
             chart={{
               categories: history.map(h => h.month),
               series: [

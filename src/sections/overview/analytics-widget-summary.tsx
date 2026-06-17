@@ -91,12 +91,13 @@ export function AnalyticsWidgetSummary({
           position: 'relative',
           color: `${color}.darker`,
           backgroundColor: 'common.white',
-          borderRadius: 2.5,
-          border: `1px solid ${varAlpha(theme.vars.palette[color].mainChannel, 0.12)}`,
+          overflow: 'hidden',
+          borderRadius: '8px',
+          border: `1px solid ${varAlpha(theme.vars.palette[color].mainChannel, 0.28)}`,
           boxShadow: `
             inset 0 1px 1px ${theme.palette.common.white},
-            0 12px 24px -12px ${varAlpha(theme.vars.palette[color].mainChannel, 0.32)},
-            0 4px 8px -2px ${varAlpha(theme.vars.palette[color].mainChannel, 0.16)}
+            0 18px 28px -18px ${varAlpha(theme.vars.palette[color].mainChannel, 0.48)},
+            0 8px 18px -10px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.55)}
           `,
           backgroundImage: `linear-gradient(135deg, ${varAlpha(theme.vars.palette[color].lighterChannel, 0.48)}, ${varAlpha(theme.vars.palette[color].lightChannel, 0.48)})`,
           transition: theme.transitions.create(['transform', 'box-shadow']),
@@ -104,8 +105,8 @@ export function AnalyticsWidgetSummary({
             transform: 'translateY(-6px)',
             boxShadow: `
               inset 0 1px 1px ${theme.palette.common.white},
-              0 24px 48px -12px ${varAlpha(theme.vars.palette[color].mainChannel, 0.4)},
-              0 8px 16px -4px ${varAlpha(theme.vars.palette[color].mainChannel, 0.2)}
+              0 26px 48px -18px ${varAlpha(theme.vars.palette[color].mainChannel, 0.52)},
+              0 12px 24px -12px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.6)}
             `,
           },
         },
