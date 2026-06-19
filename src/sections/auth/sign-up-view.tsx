@@ -79,6 +79,18 @@ export function SignUpView() {
   const notifyDaily = watch('notify_daily_reminder');
   const notifyBudget = watch('notify_budget_warnings');
 
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successLink, setSuccessLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    if (successLink) {
+      navigator.clipboard.writeText(successLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, [successLink]);
+
   const onSubmit = useCallback(async (data: SignUpFormValues) => {
     const payload = {
       ...data,
@@ -86,9 +98,14 @@ export function SignUpView() {
       notify_budget_warnings: !!data.notify_budget_warnings,
     };
     registerUser(payload, {
-      onSuccess: (res) => {
+      onSuccess: (res: any) => {
         if (res.status === 'success') {
-          router.push('/sign-in');
+          if (res.whatsapp_link) {
+            setSuccessLink(res.whatsapp_link);
+            setIsSuccess(true);
+          } else {
+            router.push('/sign-in');
+          }
         }
       }
     });
@@ -240,76 +257,122 @@ export function SignUpView() {
                 boxShadow: (theme) => ({ xs: 'none', md: theme.customShadows.z12 }),
               }}
             >
-              <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-                {!!error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+              {isSuccess ? (
+                <Box sx={{ textAlign: 'center', py: 2 }}>
+                  <Iconify icon="logos:whatsapp-icon" width={64} height={64} sx={{ mb: 3, mx: 'auto' }} />
+                  
+                  <Typography variant="h4" sx={{ fontWeight: 800, mb: 1.5, letterSpacing: -0.5 }}>
+                    ¡Registro exitoso! 🎉
+                  </Typography>
+                  
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 4, px: 1, lineHeight: 1.6 }}>
+                    Para activar las notificaciones y poder registrar tus gastos por WhatsApp, haz clic en el siguiente botón para iniciar el chat:
+                  </Typography>
 
-                <TextField
-                  fullWidth
-                  label="Nombre completo"
-                  {...register('name')}
-                  error={!!errors.name}
-                  helperText={errors.name?.message}
-                  sx={{ 
-                    mb: 2.5,
-                    '& .MuiOutlinedInput-root': {
-                      bgcolor: 'background.neutral',
-                      transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
-                      '&:hover': {
-                        bgcolor: 'background.paper',
-                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.light' },
-                      },
-                      '&.Mui-focused': {
-                        bgcolor: 'background.paper',
-                        boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}12`,
-                        '& .MuiOutlinedInput-notchedOutline': { borderWidth: 1, borderColor: 'primary.main' },
-                      },
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                    href={successLink || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    startIcon={<Iconify icon="ic:baseline-whatsapp" width={24} />}
+                    sx={{ 
+                      py: 1.5, 
+                      fontSize: '1rem', 
+                      fontWeight: 700,
                       borderRadius: 2,
-                      height: 56,
-                    },
-                    '& .MuiInputLabel-root': {
-                      px: 0.5,
-                      '&.Mui-focused': { color: 'primary.main' }
-                    }
-                  }}
-                  slotProps={{
-                    inputLabel: { shrink: true },
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
-                          <Iconify icon="solar:user-bold" width={24} sx={{ color: 'text.disabled' }} />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
+                      bgcolor: '#25D366',
+                      color: 'common.white',
+                      boxShadow: '0 8px 16px 0 rgba(37, 211, 102, 0.3)',
+                      '&:hover': {
+                        bgcolor: '#128C7E',
+                        boxShadow: '0 12px 20px 0 rgba(37, 211, 102, 0.4)',
+                        transform: 'translateY(-2px)',
+                      },
+                      transition: (theme) => theme.transitions.create(['all']),
+                      mb: 2.5
+                    }}
+                  >
+                    Activar WhatsApp
+                  </Button>
 
-                <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
-                  <FormControl sx={{ minWidth: 100 }}>
-                    <Select
-                      value={currentPrefix}
-                      onChange={(e) => setValue('phone_prefix', e.target.value as string)}
-                      sx={{ 
-                        height: 56,
-                        bgcolor: 'background.neutral',
-                        borderRadius: 2,
-                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.light' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main' },
-                      }}
-                    >
-                      {COUNTRY_CODES.map((country) => (
-                        <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  {successLink && (
+                    <Box sx={{ mb: 3, mt: 1 }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1, textAlign: 'left' }}>
+                        O si el botón no funciona, copia este enlace:
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.5,
+                          p: 1.5,
+                          borderRadius: 1.5,
+                          bgcolor: 'background.neutral',
+                          border: (theme) => `1px solid ${theme.palette.divider}`,
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            flexGrow: 1,
+                            textAlign: 'left',
+                            wordBreak: 'break-all',
+                            fontSize: '0.85rem',
+                            color: 'text.primary',
+                            fontFamily: 'monospace',
+                          }}
+                        >
+                          {successLink}
+                        </Typography>
+                        <IconButton
+                          onClick={handleCopy}
+                          size="small"
+                          sx={{
+                            color: copied ? 'success.main' : 'text.secondary',
+                            bgcolor: (theme) => copied ? `${theme.palette.success.main}12` : 'action.hover',
+                            '&:hover': {
+                              bgcolor: (theme) => copied ? `${theme.palette.success.main}24` : 'action.selected',
+                            },
+                          }}
+                        >
+                          <Iconify 
+                            icon={copied ? "solar:check-circle-bold" : "solar:copy-bold"} 
+                            width={18} 
+                          />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  )}
+
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="outlined"
+                    onClick={() => router.push('/sign-in')}
+                    sx={{ 
+                      py: 1.5, 
+                      fontSize: '1rem', 
+                      fontWeight: 700,
+                      borderRadius: 2,
+                    }}
+                  >
+                    Ir al inicio de sesión
+                  </Button>
+                </Box>
+              ) : (
+                <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                  {!!error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
                   <TextField
                     fullWidth
-                    label="Número de Teléfono"
-                    {...register('phone_number')}
-                    error={!!errors.phone_number}
-                    helperText={errors.phone_number?.message}
+                    label="Nombre completo"
+                    {...register('name')}
+                    error={!!errors.name}
+                    helperText={errors.name?.message}
                     sx={{ 
+                      mb: 2.5,
                       '& .MuiOutlinedInput-root': {
                         bgcolor: 'background.neutral',
                         transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
@@ -335,118 +398,178 @@ export function SignUpView() {
                       input: {
                         startAdornment: (
                           <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
-                            <Iconify icon="solar:phone-bold" width={24} sx={{ color: 'text.disabled' }} />
+                            <Iconify icon="solar:user-bold" width={24} sx={{ color: 'text.disabled' }} />
                           </InputAdornment>
                         ),
                       },
                     }}
                   />
-                </Box>
 
-                <TextField
-                  fullWidth
-                  label="Contraseña"
-                  type={showPassword ? 'text' : 'password'}
-                  {...register('password')}
-                  error={!!errors.password}
-                  helperText={errors.password?.message}
-                  sx={{ 
-                    mb: 2,
-                    '& .MuiOutlinedInput-root': {
-                      bgcolor: 'background.neutral',
-                      transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
-                      '&:hover': {
-                        bgcolor: 'background.paper',
-                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.light' },
+                  <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
+                    <FormControl sx={{ minWidth: 100 }}>
+                      <Select
+                        value={currentPrefix}
+                        onChange={(e) => setValue('phone_prefix', e.target.value as string)}
+                        sx={{ 
+                          height: 56,
+                          bgcolor: 'background.neutral',
+                          borderRadius: 2,
+                          '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.light' },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main' },
+                        }}
+                      >
+                        {COUNTRY_CODES.map((country) => (
+                          <MenuItem key={country.code} value={country.code}>{country.label}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+
+                    <TextField
+                      fullWidth
+                      label="Número de Teléfono"
+                      {...register('phone_number')}
+                      error={!!errors.phone_number}
+                      helperText={errors.phone_number?.message}
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          bgcolor: 'background.neutral',
+                          transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
+                          '&:hover': {
+                            bgcolor: 'background.paper',
+                            '& .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.light' },
+                          },
+                          '&.Mui-focused': {
+                            bgcolor: 'background.paper',
+                            boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}12`,
+                            '& .MuiOutlinedInput-notchedOutline': { borderWidth: 1, borderColor: 'primary.main' },
+                          },
+                          borderRadius: 2,
+                          height: 56,
+                        },
+                        '& .MuiInputLabel-root': {
+                          px: 0.5,
+                          '&.Mui-focused': { color: 'primary.main' }
+                        }
+                      }}
+                      slotProps={{
+                        inputLabel: { shrink: true },
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
+                              <Iconify icon="solar:phone-bold" width={24} sx={{ color: 'text.disabled' }} />
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  <TextField
+                    fullWidth
+                    label="Contraseña"
+                    type={showPassword ? 'text' : 'password'}
+                    {...register('password')}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    sx={{ 
+                      mb: 2,
+                      '& .MuiOutlinedInput-root': {
+                        bgcolor: 'background.neutral',
+                        transition: (theme) => theme.transitions.create(['box-shadow', 'background-color', 'border-color']),
+                        '&:hover': {
+                          bgcolor: 'background.paper',
+                          '& .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.light' },
+                        },
+                        '&.Mui-focused': {
+                          bgcolor: 'background.paper',
+                          boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}12`,
+                          '& .MuiOutlinedInput-notchedOutline': { borderWidth: 1, borderColor: 'primary.main' },
+                        },
+                        borderRadius: 2,
+                        height: 56,
                       },
-                      '&.Mui-focused': {
-                        bgcolor: 'background.paper',
-                        boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}12`,
-                        '& .MuiOutlinedInput-notchedOutline': { borderWidth: 1, borderColor: 'primary.main' },
+                      '& .MuiInputLabel-root': {
+                        px: 0.5,
+                        '&.Mui-focused': { color: 'primary.main' }
+                      }
+                    }}
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
+                            <Iconify icon="solar:lock-password-bold" width={24} sx={{ color: 'text.disabled' }} />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" sx={{ mr: 0.5 }}>
+                              <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} width={20} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
                       },
+                    }}
+                  />
+
+                  <Box sx={{ mb: 2.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox 
+                          checked={notifyDaily}
+                          onChange={(e) => setValue('notify_daily_reminder', e.target.checked)}
+                          size="small"
+                          sx={{ color: 'primary.main', '&.Mui-checked': { color: 'primary.main' } }}
+                        />
+                      }
+                      label={
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          Recibir recordatorios diarios por WhatsApp
+                        </Typography>
+                      }
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox 
+                          checked={notifyBudget}
+                          onChange={(e) => setValue('notify_budget_warnings', e.target.checked)}
+                          size="small"
+                          sx={{ color: 'primary.main', '&.Mui-checked': { color: 'primary.main' } }}
+                        />
+                      }
+                      label={
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          Alertas de presupuesto (Burn Rate)
+                        </Typography>
+                      }
+                    />
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={isLoading}
+                    sx={{ 
+                      py: 1.5, 
+                      fontSize: '1rem', 
+                      fontWeight: 700,
                       borderRadius: 2,
-                      height: 56,
-                    },
-                    '& .MuiInputLabel-root': {
-                      px: 0.5,
-                      '&.Mui-focused': { color: 'primary.main' }
-                    }
-                  }}
-                  slotProps={{
-                    inputLabel: { shrink: true },
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start" sx={{ ml: 0.5, mr: 1 }}>
-                          <Iconify icon="solar:lock-password-bold" width={24} sx={{ color: 'text.disabled' }} />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" sx={{ mr: 0.5 }}>
-                            <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} width={20} />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-
-                <Box sx={{ mb: 2.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox 
-                        checked={notifyDaily}
-                        onChange={(e) => setValue('notify_daily_reminder', e.target.checked)}
-                        size="small"
-                        sx={{ color: 'primary.main', '&.Mui-checked': { color: 'primary.main' } }}
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Recibir recordatorios diarios por WhatsApp
-                      </Typography>
-                    }
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox 
-                        checked={notifyBudget}
-                        onChange={(e) => setValue('notify_budget_warnings', e.target.checked)}
-                        size="small"
-                        sx={{ color: 'primary.main', '&.Mui-checked': { color: 'primary.main' } }}
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Alertas de presupuesto (Burn Rate)
-                      </Typography>
-                    }
-                  />
+                      boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}40`,
+                      '&:hover': {
+                        boxShadow: (theme) => `0 12px 20px 0 ${theme.palette.primary.main}60`,
+                        transform: 'translateY(-2px)',
+                      },
+                      transition: (theme) => theme.transitions.create(['all']),
+                    }}
+                  >
+                    {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Registrarse'}
+                  </Button>
                 </Box>
-
-                <Button
-                  fullWidth
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={isLoading}
-                  sx={{ 
-                    py: 1.5, 
-                    fontSize: '1rem', 
-                    fontWeight: 700,
-                    borderRadius: 2,
-                    boxShadow: (theme) => `0 8px 16px 0 ${theme.palette.primary.main}40`,
-                    '&:hover': {
-                      boxShadow: (theme) => `0 12px 20px 0 ${theme.palette.primary.main}60`,
-                      transform: 'translateY(-2px)',
-                    },
-                    transition: (theme) => theme.transitions.create(['all']),
-                  }}
-                >
-                  {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Registrarse'}
-                </Button>
-              </Box>
+              )}
             </Box>
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
               <BorderBeam size={250} duration={12} delay={9} />
