@@ -168,13 +168,13 @@ export function GastosView() {
   });
 
   const [editingItem, setEditingItem] = useState<TransactionRow | null>(null);
-  const [notification, setNotification] = useState<NotificationState>({ open: false, message: '', severity: 'success' });
+  const [notification, setNotification] = useState<NotificationState & { key?: number }>({ open: false, message: '', severity: 'success', key: 0 });
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
 
   const handleAddGasto = () => {
     if (!form.detail || !form.amount || !form.category_id) {
-      setNotification({ open: true, message: 'Completa los campos obligatorios', severity: 'error' });
+      setNotification({ open: true, message: 'Completa los campos obligatorios', severity: 'error', key: Date.now() });
       return;
     }
 
@@ -188,12 +188,12 @@ export function GastosView() {
       currency: 'PEN'
     }, {
       onSuccess: () => {
-        setNotification({ open: true, message: 'Gasto añadido correctamente', severity: 'success' });
+        setNotification({ open: true, message: 'Gasto añadido correctamente', severity: 'success', key: Date.now() });
         setForm({ detail: '', amount: '', category_id: '', source: 'Efectivo', operation_at: new Date().toISOString().split('T')[0] });
         refetch();
       },
       onError: (err: unknown) => {
-        setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
+        setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error', key: Date.now() });
       }
     });
   };
@@ -206,7 +206,7 @@ export function GastosView() {
       type: 'expense',
     }, {
       onSuccess: (newCat: Category) => {
-        setNotification({ open: true, message: 'Categoría creada', severity: 'success' });
+        setNotification({ open: true, message: 'Categoría creada', severity: 'success', key: Date.now() });
         setNewCategoryName('');
         setOpenCategoryDialog(false);
         // Seleccionar automáticamente la nueva categoría
@@ -215,7 +215,7 @@ export function GastosView() {
         }
       },
       onError: (err: unknown) => {
-        setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error' });
+        setNotification({ open: true, message: `Error: ${getErrorMessage(err)}`, severity: 'error', key: Date.now() });
       }
     });
   };
@@ -234,7 +234,7 @@ export function GastosView() {
       }
     }, {
       onSuccess: () => {
-        setNotification({ open: true, message: 'Gasto actualizado', severity: 'success' });
+        setNotification({ open: true, message: 'Gasto actualizado', severity: 'success', key: Date.now() });
         setEditingItem(null);
         refetch();
       }
@@ -245,7 +245,7 @@ export function GastosView() {
     if (window.confirm('¿Estás seguro de eliminar este gasto?')) {
       deleteMutation.mutate(id, {
         onSuccess: () => {
-          setNotification({ open: true, message: 'Gasto eliminado', severity: 'success' });
+          setNotification({ open: true, message: 'Gasto eliminado', severity: 'success', key: Date.now() });
           refetch();
         }
       });
@@ -554,11 +554,17 @@ export function GastosView() {
       </Dialog>
 
       <Snackbar 
+        key={notification.key}
         open={notification.open} 
         autoHideDuration={4000} 
         onClose={() => setNotification({ ...notification, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert severity={notification.severity} sx={{ width: '100%' }}>
+        <Alert 
+          onClose={() => setNotification({ ...notification, open: false })} 
+          severity={notification.severity} 
+          sx={{ width: '100%' }}
+        >
           {notification.message}
         </Alert>
       </Snackbar>

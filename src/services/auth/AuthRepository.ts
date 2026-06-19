@@ -22,6 +22,7 @@ export interface User {
   phone_prefix?: string;
   phone_number: string;
   role?: string;
+  whatsapp_link?: string;
 }
 
 // Define los nombres de los endpoints

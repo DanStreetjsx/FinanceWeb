@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from 'react';
+import { useState, useEffect, useCallback, type MouseEvent } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -7,19 +7,27 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import AlertTitle from '@mui/material/AlertTitle';
 import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
+import DialogTitle from '@mui/material/DialogTitle';
 import { alpha, useTheme } from '@mui/material/styles';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { fPercent, fCurrency } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useAuthStatus } from 'src/services/auth/AuthRepositoryHooks';
 import { useDashboardData } from 'src/services/analiticas/AnaliticasRepositoryHooks';
+
+import { Iconify } from 'src/components/iconify';
 
 import { AnalyticsCurrentVisits } from '../analytics-current-visits';
 import { AnalyticsWebsiteVisits } from '../analytics-website-visits';
@@ -61,10 +69,39 @@ const MONTH_OPTIONS = [
 
 export function OverviewAnalyticsView() {
   const theme = useTheme();
+  const { user } = useAuthStatus();
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthValue());
   const [monthPickerAnchorEl, setMonthPickerAnchorEl] = useState<HTMLElement | null>(null);
   const [monthPickerYear, setMonthPickerYear] = useState(Number(getCurrentMonthValue().slice(0, 4)));
   const { data, isLoading, error } = useDashboardData(selectedMonth);
+
+  const [whatsappModalOpen, setWhatsappModalOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  useEffect(() => {
+    if (user && user.whatsapp_link) {
+      const alreadyOpened = localStorage.getItem(`whatsapp_link_opened_${user.id}`);
+      if (!alreadyOpened) {
+        setWhatsappModalOpen(true);
+      }
+    }
+  }, [user]);
+
+  const handleOpenWhatsAppLink = useCallback(() => {
+    if (user && user.whatsapp_link) {
+      window.open(user.whatsapp_link, '_blank', 'noopener,noreferrer');
+      localStorage.setItem(`whatsapp_link_opened_${user.id}`, 'true');
+      setWhatsappModalOpen(false);
+    }
+  }, [user]);
+
+  const handleCopyWhatsAppLink = useCallback(() => {
+    if (user && user.whatsapp_link) {
+      navigator.clipboard.writeText(user.whatsapp_link);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -736,6 +773,128 @@ export function OverviewAnalyticsView() {
         </Grid>
         </Grid>
       </Stack>
+
+      <Dialog
+        open={whatsappModalOpen}
+        onClose={() => setWhatsappModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            p: 1,
+            position: 'relative',
+          }
+        }}
+      >
+        <DialogTitle sx={{ textAlign: 'center', pt: 3, pb: 1, fontWeight: 800, fontSize: '1.25rem' }}>
+          ¡Conecta tu WhatsApp! 📱
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: 'center', pb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <Box 
+              sx={{ 
+                p: 2, 
+                borderRadius: '50%', 
+                bgcolor: alpha('#25D366', 0.12), 
+                display: 'inline-flex',
+                color: '#25D366'
+              }}
+            >
+              <Iconify icon="logos:whatsapp-icon" width={48} height={48} />
+            </Box>
+          </Box>
+
+          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3, px: 1, lineHeight: 1.6 }}>
+            Para poder registrar tus gastos de forma rápida y recibir tus recordatorios diarios, inicia una conversación con nuestro bot oficial.
+          </Typography>
+
+          {user?.whatsapp_link && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                p: 1.25,
+                borderRadius: 1.5,
+                bgcolor: 'background.neutral',
+                border: `1px solid ${theme.palette.divider}`,
+                mb: 1
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  flexGrow: 1,
+                  textAlign: 'left',
+                  wordBreak: 'break-all',
+                  color: 'text.primary',
+                  fontFamily: 'monospace',
+                  fontSize: '0.8rem'
+                }}
+              >
+                {user.whatsapp_link}
+              </Typography>
+              <IconButton
+                onClick={handleCopyWhatsAppLink}
+                size="small"
+                sx={{
+                  color: copiedLink ? 'success.main' : 'text.secondary',
+                  bgcolor: copiedLink ? `${theme.palette.success.main}12` : 'action.hover',
+                  '&:hover': {
+                    bgcolor: copiedLink ? `${theme.palette.success.main}24` : 'action.selected',
+                  },
+                }}
+              >
+                <Iconify 
+                  icon={copiedLink ? "solar:check-circle-bold" : "solar:copy-bold"} 
+                  width={16} 
+                />
+              </IconButton>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ flexDirection: 'column', gap: 1, px: 3, pb: 3 }}>
+          <Button
+            fullWidth
+            size="large"
+            variant="contained"
+            onClick={handleOpenWhatsAppLink}
+            startIcon={<Iconify icon="ic:baseline-whatsapp" width={24} />}
+            sx={{ 
+              py: 1.5, 
+              fontSize: '1rem', 
+              fontWeight: 700,
+              borderRadius: 2,
+              bgcolor: '#25D366',
+              color: 'common.white',
+              boxShadow: '0 8px 16px 0 rgba(37, 211, 102, 0.3)',
+              '&:hover': {
+                bgcolor: '#128C7E',
+                boxShadow: '0 12px 20px 0 rgba(37, 211, 102, 0.4)',
+                transform: 'translateY(-1px)',
+              },
+              transition: theme.transitions.create(['all']),
+            }}
+          >
+            Activar WhatsApp
+          </Button>
+          <Button
+            fullWidth
+            size="large"
+            variant="text"
+            onClick={() => setWhatsappModalOpen(false)}
+            sx={{ 
+              color: 'text.secondary',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              '&:hover': { bgcolor: 'action.hover' }
+            }}
+          >
+            Quizás más tarde
+          </Button>
+        </DialogActions>
+      </Dialog>
     </DashboardContent>
   );
 }
