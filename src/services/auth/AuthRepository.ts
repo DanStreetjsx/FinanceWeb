@@ -52,6 +52,11 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface RegisterResponse {
+  user: User;
+  whatsapp_link?: string;
+}
+
 export interface UpdateProfileRequest {
   name?: string;
   phone_prefix?: string;
@@ -75,7 +80,7 @@ export interface UserData extends User {}
 // Interfaz del repositorio de autenticación - define lo que la implementación de API debe implementar
 export interface IAuthRepository {
   login(request: LoginRequest): Promise<ApiResponse<AuthResponse>>;
-  register(request: RegisterRequest): Promise<ApiResponse<void>>;
+  register(request: RegisterRequest): Promise<ApiResponse<RegisterResponse>>;
   verifyToken(token: string): Promise<ApiResponse<User>>;
   refreshToken(): Promise<ApiResponse<{ token: string }>>;
   logout(): Promise<void>;

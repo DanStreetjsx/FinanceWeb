@@ -100,8 +100,9 @@ export function SignUpView() {
     registerUser(payload, {
       onSuccess: (res: any) => {
         if (res.status === 'success') {
-          if (res.whatsapp_link) {
-            setSuccessLink(res.whatsapp_link);
+          const link = res.data?.whatsapp_link || res.whatsapp_link;
+          if (link) {
+            setSuccessLink(link);
             setIsSuccess(true);
           } else {
             router.push('/sign-in');

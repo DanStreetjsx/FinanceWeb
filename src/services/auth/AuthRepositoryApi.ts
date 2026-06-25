@@ -12,6 +12,7 @@ import type {
   AuthResponse,
   IAuthRepository,
   RegisterRequest,
+  RegisterResponse,
   UpdateProfileRequest,
   ResetPasswordRequest,
   RequestResetPasswordRequest
@@ -98,16 +99,17 @@ export class AuthRepositoryApi implements IAuthRepository {
     }
   }
 
-  async register(request: RegisterRequest): Promise<ApiResponse<void>> {
+  async register(request: RegisterRequest): Promise<ApiResponse<RegisterResponse>> {
     try {
-      await api.post<void>(
+      const response = await api.post<RegisterResponse>(
         `${AuthEndpoints.REGISTER}`,
         request
       );
-      
+
       return {
         status: 'success',
         message: 'Usuario registrado exitosamente',
+        data: response.data,
       };
     } catch (error) {
       return this.handleError(error);
