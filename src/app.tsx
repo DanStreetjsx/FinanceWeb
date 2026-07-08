@@ -45,7 +45,7 @@ function useAdSenseScript() {
     }
 
     const existingScript = document.querySelector<HTMLScriptElement>(
-      `script[data-finance-adsense="true"], script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]`
+      `#finance-adsense, script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]`
     );
 
     if (existingScript) {
@@ -56,7 +56,7 @@ function useAdSenseScript() {
     script.async = true;
     script.crossOrigin = 'anonymous';
     script.src = ADS_CONFIG.ADSENSE_SCRIPT_URL;
-    script.dataset.financeAdsense = 'true';
+    script.id = 'finance-adsense';
     script.setAttribute('data-ad-client', ADS_CONFIG.ADSENSE_CLIENT_ID);
 
     document.head.appendChild(script);

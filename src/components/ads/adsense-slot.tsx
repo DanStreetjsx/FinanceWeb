@@ -17,7 +17,7 @@ type AdSenseSlotProps = {
   label?: string;
 };
 
-const ADSENSE_SCRIPT_SELECTOR = 'script[data-finance-adsense="true"]';
+const ADSENSE_SCRIPT_SELECTOR = '#finance-adsense';
 
 function loadAdSenseScript() {
   const existingScript = document.querySelector<HTMLScriptElement>(ADSENSE_SCRIPT_SELECTOR);
@@ -34,7 +34,7 @@ function loadAdSenseScript() {
   script.async = true;
   script.crossOrigin = 'anonymous';
   script.src = ADS_CONFIG.ADSENSE_SCRIPT_URL;
-  script.dataset.financeAdsense = 'true';
+  script.id = 'finance-adsense';
   script.setAttribute('data-ad-client', ADS_CONFIG.ADSENSE_CLIENT_ID);
 
   document.head.appendChild(script);
