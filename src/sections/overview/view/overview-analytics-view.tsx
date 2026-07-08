@@ -398,8 +398,8 @@ export function OverviewAnalyticsView() {
           </Box>
         </Popover>
 
-        <Alert 
-          severity="info" 
+        <Alert
+          severity="info"
           icon={
             <Box
               component="img"
@@ -425,352 +425,352 @@ export function OverviewAnalyticsView() {
         </Typography>
 
         <Grid container spacing={3} alignItems="stretch">
-        {/* Primera fila: 4 cards de métricas */}
-        <Grid size={{ xs: 12 }}>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <AnalyticsWidgetSummary
-                title="Ingresos Total"
-                percent={0}
-                total={metrics.income}
-                color="primary"
-                icon={<img alt="Ingresos" src="/assets/icons/glass/ic-glass-bag.svg" />} 
-                chart={{
-                  categories: history.map(h => h.month),
-                  series: history.map(h => h.income),
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <AnalyticsWidgetSummary
-                title="Total Gastado"
-                percent={metrics.expense_diff_percent}
-                total={metrics.expense}
-                color="error"
-                icon={<img alt="Gastos" src="/assets/icons/glass/ic-glass-buy.svg" />} 
-                chart={{
-                  categories: history.map(h => h.month),
-                  series: history.map(h => h.expense),
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <AnalyticsWidgetSummary
-                title="Saldo"
-                percent={0}
-                total={metrics.balance}
-                color="success"
-                icon={<img alt="Saldo" src="/assets/icons/glass/ic-glass-wallet.svg" />} 
-                chart={{
-                  categories: history.map(h => h.month),
-                  series: history.map(h => h.cumulative_balance),
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <AnalyticsWidgetSummary
-                title="Estado de Presupuesto"
-                percent={0}
-                total={remainingBudget}
-                color={burnRateStatus === 'warning' ? 'warning' : burnRateStatus === 'over_budget' ? 'error' : 'success'}
-                icon={
-                  <img 
-                    alt="Estado Presupuesto" 
-                    src={
-                      !burnRate
-                        ? '/assets/icons/glass/ic-glass-pensando.svg'
-                        : remainingBudget < 0
-                        ? '/assets/icons/glass/ic-glass-mal.png'
-                        : '/assets/icons/glass/ic-glass-plus.svg'
-                    } 
-                  />
-                } 
-                chart={{
-                  categories: history.map(h => h.month),
-                  series: [0, 0, 0, 0, 0, 0],
-                }}
-              >
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  {burnRateHealthMessage}
-                </Typography>
-              </AnalyticsWidgetSummary>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        {/* Segunda fila: pastel + evolución de ahorros */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Stack spacing={3}>
-            <AnalyticsCurrentVisits
-              title="Gastos por Categoría"
-              sx={panelSx}
-              chart={{
-                series: categoriesBreakdown.length > 0 
-                  ? categoriesBreakdown.map(c => ({ label: c.label, value: c.value }))
-                  : [{ label: 'Sin datos', value: 0 }],
-              }}
-            />
-            <AnalyticsCurrentVisits
-              title="Progreso del Presupuesto"
-              sx={panelSx}
-              chart={{
-                series: hasBudget ? [
-                  { label: 'Gastado', value: totalSpent },
-                  { label: 'Restante', value: Math.max(0, remainingBudget) },
-                ] : [{ label: 'Sin presupuesto', value: 0 }],
-              }}
-            />
-          </Stack>
-        </Grid>
-        
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Stack spacing={3}>
-            <AnalyticsSavingsEvolution
-              title="Evolución de Ahorros"
-              subheader="Balance acumulado mes a mes"
-              sx={panelSx}
-              chart={{
-                categories: history.map(h => h.month),
-                series: [
-                  { name: 'Balance Acumulado', data: history.map(h => h.cumulative_balance) },
-                  { name: 'Ahorro Mensual', data: history.map(h => h.savings) },
-                ],
-              }}
-            />
-            
+          {/* Primera fila: 4 cards de métricas */}
+          <Grid size={{ xs: 12 }}>
             <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <AnalyticsSpendingComparison
-                  title="Comparativa de Gastos"
-                  subheader="Mes actual vs Mes anterior"
-                  sx={panelSx}
-                  chart={{
-                    categories: ['Gastos'],
-                    series: [
-                      { name: 'Mes Actual', data: [metrics.expense] },
-                      { name: 'Mes Anterior', data: [metrics.previous_month_expense] },
-                    ],
-                  }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <AnalyticsWebsiteVisits
-                  title="Ingresos vs Gastos"
-                  sx={panelSx}
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <AnalyticsWidgetSummary
+                  title="Ingresos Total"
+                  percent={0}
+                  total={metrics.income}
+                  color="primary"
+                  icon={<img alt="Ingresos" src="/assets/icons/glass/ic-glass-bag.svg" />}
                   chart={{
                     categories: history.map(h => h.month),
-                    series: [
-                      { name: 'Ingresos', data: history.map(h => h.income) },
-                      { name: 'Gastos', data: history.map(h => h.expense) },
-                    ],
+                    series: history.map(h => h.income),
                   }}
                 />
               </Grid>
-            </Grid>
-          </Stack>
-        </Grid>
-
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="overline" sx={{ color: 'text.secondary', letterSpacing: 1.2, fontWeight: 700, mb: 1.5, display: 'block' }}>
-            Profundidad del gasto
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 5 }}>
-              <Card
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  borderRadius: '8px',
-                  border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
-                  boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
-                  background: 'linear-gradient(135deg, #fffdf7 0%, #f5fbff 100%)',
-                }}
-              >
-                <CardHeader
-                  title="Radiografía de tus gastos"
-                  subheader="Qué categorías están consumiendo más dinero"
-                  sx={{ p: 0, mb: 2 }}
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <AnalyticsWidgetSummary
+                  title="Total Gastado"
+                  percent={metrics.expense_diff_percent}
+                  total={metrics.expense}
+                  color="error"
+                  icon={<img alt="Gastos" src="/assets/icons/glass/ic-glass-buy.svg" />}
+                  chart={{
+                    categories: history.map(h => h.month),
+                    series: history.map(h => h.expense),
+                  }}
                 />
-
-                {topCategories.length === 0 ? (
-                  <Alert severity="info">Todavía no hay suficiente data de categorías para este periodo.</Alert>
-                ) : (
-                  <Stack spacing={2}>
-                    {topCategories.map((category) => (
-                      <Box key={category.label}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.8 }}>
-                          <Typography variant="subtitle2">{category.label}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {fCurrency(category.value)} ({fPercent(category.share)})
-                          </Typography>
-                        </Stack>
-                        <LinearProgress
-                          variant="determinate"
-                          value={Math.min(100, category.share)}
-                          sx={{ height: 8, borderRadius: 99 }}
-                        />
-                      </Box>
-                    ))}
-                  </Stack>
-                )}
-              </Card>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <AnalyticsWidgetSummary
+                  title="Saldo"
+                  percent={0}
+                  total={metrics.balance}
+                  color="success"
+                  icon={<img alt="Saldo" src="/assets/icons/glass/ic-glass-wallet.svg" />}
+                  chart={{
+                    categories: history.map(h => h.month),
+                    series: history.map(h => h.cumulative_balance),
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <AnalyticsWidgetSummary
+                  title="Estado de Presupuesto"
+                  percent={0}
+                  total={remainingBudget}
+                  color={burnRateStatus === 'warning' ? 'warning' : burnRateStatus === 'over_budget' ? 'error' : 'success'}
+                  icon={
+                    <img
+                      alt="Estado Presupuesto"
+                      src={
+                        !burnRate
+                          ? '/assets/icons/glass/ic-glass-pensando.svg'
+                          : remainingBudget < 0
+                            ? '/assets/icons/glass/ic-glass-mal.png'
+                            : '/assets/icons/glass/ic-glass-plus.svg'
+                      }
+                    />
+                  }
+                  chart={{
+                    categories: history.map(h => h.month),
+                    series: [0, 0, 0, 0, 0, 0],
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    {burnRateHealthMessage}
+                  </Typography>
+                </AnalyticsWidgetSummary>
+              </Grid>
             </Grid>
+          </Grid>
 
-            <Grid size={{ xs: 12, md: 4 }}>
-              <AnalyticsCurrentSubject
-                title="Concentración del gasto"
-                subheader="Distribución actual vs objetivo equilibrado"
+          {/* Segunda fila: pastel + evolución de ahorros */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Stack spacing={3}>
+              <AnalyticsCurrentVisits
+                title="Gastos por Categoría"
                 sx={panelSx}
                 chart={{
-                  categories: topCategoryLabels.length > 0 ? topCategoryLabels : ['Sin datos'],
-                  series:
-                    topCategoryLabels.length > 0
-                      ? [
+                  series: categoriesBreakdown.length > 0
+                    ? categoriesBreakdown.map(c => ({ label: c.label, value: c.value }))
+                    : [{ label: 'Sin datos', value: 0 }],
+                }}
+              />
+              <AnalyticsCurrentVisits
+                title="Progreso del Presupuesto"
+                sx={panelSx}
+                chart={{
+                  series: hasBudget ? [
+                    { label: 'Gastado', value: totalSpent },
+                    { label: 'Restante', value: Math.max(0, remainingBudget) },
+                  ] : [{ label: 'Sin presupuesto', value: 0 }],
+                }}
+              />
+            </Stack>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Stack spacing={3}>
+              <AnalyticsSavingsEvolution
+                title="Evolución de Ahorros"
+                subheader="Balance acumulado mes a mes"
+                sx={panelSx}
+                chart={{
+                  categories: history.map(h => h.month),
+                  series: [
+                    { name: 'Balance Acumulado', data: history.map(h => h.cumulative_balance) },
+                    { name: 'Ahorro Mensual', data: history.map(h => h.savings) },
+                  ],
+                }}
+              />
+
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <AnalyticsSpendingComparison
+                    title="Comparativa de Gastos"
+                    subheader="Mes actual vs Mes anterior"
+                    sx={panelSx}
+                    chart={{
+                      categories: ['Gastos'],
+                      series: [
+                        { name: 'Mes Actual', data: [metrics.expense] },
+                        { name: 'Mes Anterior', data: [metrics.previous_month_expense] },
+                      ],
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <AnalyticsWebsiteVisits
+                    title="Ingresos vs Gastos"
+                    sx={panelSx}
+                    chart={{
+                      categories: history.map(h => h.month),
+                      series: [
+                        { name: 'Ingresos', data: history.map(h => h.income) },
+                        { name: 'Gastos', data: history.map(h => h.expense) },
+                      ],
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Stack>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="overline" sx={{ color: 'text.secondary', letterSpacing: 1.2, fontWeight: 700, mb: 1.5, display: 'block' }}>
+              Profundidad del gasto
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 5 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    height: '100%',
+                    borderRadius: '8px',
+                    border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
+                    boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
+                    background: 'linear-gradient(135deg, #fffdf7 0%, #f5fbff 100%)',
+                  }}
+                >
+                  <CardHeader
+                    title="Radiografía de tus gastos"
+                    subheader="Qué categorías están consumiendo más dinero"
+                    sx={{ p: 0, mb: 2 }}
+                  />
+
+                  {topCategories.length === 0 ? (
+                    <Alert severity="info">Todavía no hay suficiente data de categorías para este periodo.</Alert>
+                  ) : (
+                    <Stack spacing={2}>
+                      {topCategories.map((category) => (
+                        <Box key={category.label}>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.8 }}>
+                            <Typography variant="subtitle2">{category.label}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {fCurrency(category.value)} ({fPercent(category.share)})
+                            </Typography>
+                          </Stack>
+                          <LinearProgress
+                            variant="determinate"
+                            value={Math.min(100, category.share)}
+                            sx={{ height: 8, borderRadius: 99 }}
+                          />
+                        </Box>
+                      ))}
+                    </Stack>
+                  )}
+                </Card>
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 4 }}>
+                <AnalyticsCurrentSubject
+                  title="Concentración del gasto"
+                  subheader="Distribución actual vs objetivo equilibrado"
+                  sx={panelSx}
+                  chart={{
+                    categories: topCategoryLabels.length > 0 ? topCategoryLabels : ['Sin datos'],
+                    series:
+                      topCategoryLabels.length > 0
+                        ? [
                           { name: 'Actual %', data: topCategoryShares },
                           {
                             name: 'Objetivo %',
                             data: topCategoryLabels.map(() => Number((100 / topCategoryLabels.length).toFixed(2)))
                           }
                         ]
-                      : [
+                        : [
                           { name: 'Actual %', data: [0] },
                           { name: 'Objetivo %', data: [0] }
                         ],
-                  options: {
-                    yaxis: {
-                      labels: {
-                        formatter: (value: number) => `${Math.round(value)}%`
+                    options: {
+                      yaxis: {
+                        labels: {
+                          formatter: (value: number) => `${Math.round(value)}%`
+                        }
                       }
                     }
-                  }
-                }}
-              />
-            </Grid>
+                  }}
+                />
+              </Grid>
 
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Card
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  borderRadius: '8px',
-                  border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
-                  boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
-                  background: 'linear-gradient(180deg, #fff9ed 0%, #ffffff 100%)',
-                }}
-              >
-                <Typography variant="overline" color="text.secondary">
-                  Panel de control
-                </Typography>
-                <Typography variant="h6" sx={{ mt: 0.5, mb: 2 }}>
-                  Semáforo financiero
-                </Typography>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    height: '100%',
+                    borderRadius: '8px',
+                    border: `1px solid ${alpha(theme.palette.grey[500], 0.24)}`,
+                    boxShadow: `0 16px 34px -24px ${alpha(theme.palette.grey[900], 0.48)}`,
+                    background: 'linear-gradient(180deg, #fff9ed 0%, #ffffff 100%)',
+                  }}
+                >
+                  <Typography variant="overline" color="text.secondary">
+                    Panel de control
+                  </Typography>
+                  <Typography variant="h6" sx={{ mt: 0.5, mb: 2 }}>
+                    Semáforo financiero
+                  </Typography>
 
-                <Chip label={spendingControlLabel} color={spendingControlColor} sx={{ mb: 2 }} />
+                  <Chip label={spendingControlLabel} color={spendingControlColor} sx={{ mb: 2 }} />
 
-                <Stack spacing={1.5}>
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Gasto sobre ingreso
-                    </Typography>
-                    <Typography variant="h5">{fPercent(expenseVsIncomeRatio)}</Typography>
-                  </Box>
+                  <Stack spacing={1.5}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Gasto sobre ingreso
+                      </Typography>
+                      <Typography variant="h5">{fPercent(expenseVsIncomeRatio)}</Typography>
+                    </Box>
 
-                  <Divider />
+                    <Divider />
 
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Top 3 categorías
-                    </Typography>
-                    <Typography variant="h5">{fPercent(topThreeShare)}</Typography>
-                  </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Top 3 categorías
+                      </Typography>
+                      <Typography variant="h5">{fPercent(topThreeShare)}</Typography>
+                    </Box>
 
-                  <Divider />
+                    <Divider />
 
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Ahorro potencial (bajando 10% la categoría líder)
-                    </Typography>
-                    <Typography variant="h6" color="success.main">
-                      {fCurrency(savingsIfTopCategoryDrops10)}
-                    </Typography>
-                  </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Ahorro potencial (bajando 10% la categoría líder)
+                      </Typography>
+                      <Typography variant="h6" color="success.main">
+                        {fCurrency(savingsIfTopCategoryDrops10)}
+                      </Typography>
+                    </Box>
 
-                  {projectedOverrun > 0 && (
-                    <>
-                      <Divider />
-                      <Box>
-                        <Typography variant="caption" color="text.secondary">
-                          Riesgo de sobrepasar presupuesto proyectado
-                        </Typography>
-                        <Typography variant="h6" color="error.main">
-                          {fCurrency(projectedOverrun)}
-                        </Typography>
-                      </Box>
-                    </>
-                  )}
-                </Stack>
-              </Card>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="overline" sx={{ color: 'text.secondary', letterSpacing: 1.2, fontWeight: 700, mb: 1.5, display: 'block' }}>
-            Tendencias y comparativas
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <AnalyticsWebsiteVisits
-                title="Top categorías por monto"
-                subheader="Dónde se está concentrando el gasto real"
-                sx={panelSx}
-                chart={{
-                  categories: topCategoryLabels.length > 0 ? topCategoryLabels : ['Sin datos'],
-                  series: [{ name: 'Gasto', data: topCategoryValues.length > 0 ? topCategoryValues : [0] }],
-                  options: {
-                    plotOptions: { bar: { borderRadius: 6, columnWidth: '56%' } },
-                    tooltip: { y: { formatter: (value: number) => fCurrency(value) } },
-                    yaxis: { labels: { formatter: (value: number) => fCurrency(value) } },
-                  }
-                }}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 6 }}>
-              <AnalyticsWebsiteVisits
-                title="Ritmo de gasto mensual"
-                subheader="Compara cada mes contra tu promedio"
-                sx={panelSx}
-                chart={{
-                  categories: historyCategories,
-                  series: [
-                    { name: 'Gasto mensual', data: historyExpenseSeries },
-                    { name: 'Promedio', data: historyAverageSeries },
-                  ],
-                  options: {
-                    tooltip: { y: { formatter: (value: number) => fCurrency(value) } },
-                    yaxis: { labels: { formatter: (value: number) => fCurrency(value) } },
-                  }
-                }}
-              />
+                    {projectedOverrun > 0 && (
+                      <>
+                        <Divider />
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">
+                            Riesgo de sobrepasar presupuesto proyectado
+                          </Typography>
+                          <Typography variant="h6" color="error.main">
+                            {fCurrency(projectedOverrun)}
+                          </Typography>
+                        </Box>
+                      </>
+                    )}
+                  </Stack>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
 
-        <Grid size={{ xs: 12 }}>
-          <AnalyticsConversionRates
-            title="Historial de Movimientos"
-            subheader="Ingresos y gastos de los últimos 6 meses"
-            sx={panelSx}
-            chart={{
-              categories: history.map(h => h.month),
-              series: [
-                { name: 'Ingresos', data: history.map(h => h.income) },
-                { name: 'Gastos', data: history.map(h => h.expense) },
-              ],
-            }}
-          />
-        </Grid>
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="overline" sx={{ color: 'text.secondary', letterSpacing: 1.2, fontWeight: 700, mb: 1.5, display: 'block' }}>
+              Tendencias y comparativas
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <AnalyticsWebsiteVisits
+                  title="Top categorías por monto"
+                  subheader="Dónde se está concentrando el gasto real"
+                  sx={panelSx}
+                  chart={{
+                    categories: topCategoryLabels.length > 0 ? topCategoryLabels : ['Sin datos'],
+                    series: [{ name: 'Gasto', data: topCategoryValues.length > 0 ? topCategoryValues : [0] }],
+                    options: {
+                      plotOptions: { bar: { borderRadius: 6, columnWidth: '56%' } },
+                      tooltip: { y: { formatter: (value: number) => fCurrency(value) } },
+                      yaxis: { labels: { formatter: (value: number) => fCurrency(value) } },
+                    }
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <AnalyticsWebsiteVisits
+                  title="Ritmo de gasto mensual"
+                  subheader="Compara cada mes contra tu promedio"
+                  sx={panelSx}
+                  chart={{
+                    categories: historyCategories,
+                    series: [
+                      { name: 'Gasto mensual', data: historyExpenseSeries },
+                      { name: 'Promedio', data: historyAverageSeries },
+                    ],
+                    options: {
+                      tooltip: { y: { formatter: (value: number) => fCurrency(value) } },
+                      yaxis: { labels: { formatter: (value: number) => fCurrency(value) } },
+                    }
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <AnalyticsConversionRates
+              title="Historial de Movimientos"
+              subheader="Ingresos y gastos de los últimos 6 meses"
+              sx={panelSx}
+              chart={{
+                categories: history.map(h => h.month),
+                series: [
+                  { name: 'Ingresos', data: history.map(h => h.income) },
+                  { name: 'Gastos', data: history.map(h => h.expense) },
+                ],
+              }}
+            />
+          </Grid>
         </Grid>
       </Stack>
 
@@ -792,11 +792,11 @@ export function OverviewAnalyticsView() {
         </DialogTitle>
         <DialogContent sx={{ textAlign: 'center', pb: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-            <Box 
-              sx={{ 
-                p: 2, 
-                borderRadius: '50%', 
-                bgcolor: alpha('#25D366', 0.12), 
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: '50%',
+                bgcolor: alpha('#25D366', 0.12),
                 display: 'inline-flex',
                 color: '#25D366'
               }}
@@ -846,9 +846,9 @@ export function OverviewAnalyticsView() {
                   },
                 }}
               >
-                <Iconify 
-                  icon={copiedLink ? "solar:check-circle-bold" : "solar:copy-bold"} 
-                  width={16} 
+                <Iconify
+                  icon={copiedLink ? "solar:check-circle-bold" : "solar:copy-bold"}
+                  width={16}
                 />
               </IconButton>
             </Box>
@@ -861,9 +861,9 @@ export function OverviewAnalyticsView() {
             variant="contained"
             onClick={handleOpenWhatsAppLink}
             startIcon={<Iconify icon="ic:baseline-whatsapp" width={24} />}
-            sx={{ 
-              py: 1.5, 
-              fontSize: '1rem', 
+            sx={{
+              py: 1.5,
+              fontSize: '1rem',
               fontWeight: 700,
               borderRadius: 2,
               bgcolor: '#25D366',
@@ -884,7 +884,7 @@ export function OverviewAnalyticsView() {
             size="large"
             variant="text"
             onClick={() => setWhatsappModalOpen(false)}
-            sx={{ 
+            sx={{
               color: 'text.secondary',
               fontWeight: 600,
               fontSize: '0.9rem',

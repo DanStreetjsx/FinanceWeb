@@ -9,6 +9,7 @@ export type NavItem = {
   path: string;
   icon: React.ReactNode;
   info?: React.ReactNode;
+  roles?: string[];
 };
 
 export const navData = [
@@ -41,5 +42,11 @@ export const navData = [
     title: 'Categorías',
     path: '/dashboard/categorias',
     icon: icon('ic-categories'),
+  },
+  {
+    title: 'Admin',
+    path: '/dashboard/admin',
+    icon: icon('ic-analytics'),
+    roles: ['admin'],
   },
 ];

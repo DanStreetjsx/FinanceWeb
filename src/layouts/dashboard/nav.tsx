@@ -12,6 +12,8 @@ import Drawer, { drawerClasses } from '@mui/material/Drawer';
 import { usePathname } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
+import { useAuthStatus } from 'src/services/auth/AuthRepositoryHooks';
+
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 
@@ -112,6 +114,9 @@ export function NavMobile({
 
 export function NavContent({ data, slots, sx }: NavContentProps) {
   const pathname = usePathname();
+  const { user } = useAuthStatus();
+  const role = user?.role || 'user';
+  const visibleData = data.filter((item) => !item.roles || item.roles.includes(role));
 
   return (
     <>
@@ -137,7 +142,7 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
               flexDirection: 'column',
             }}
           >
-            {data.map((item) => {
+            {visibleData.map((item) => {
               const isActived = item.path === pathname;
 
               return (

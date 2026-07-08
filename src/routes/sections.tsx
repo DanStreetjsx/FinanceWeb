@@ -22,6 +22,7 @@ export const CategoriasPage = lazy(() => import('src/pages/categorias'));
 export const RecordatoriosPage = lazy(() => import('src/pages/recordatorios'));
 export const ProfilePage = lazy(() => import('src/pages/profile'));
 export const SettingsPage = lazy(() => import('src/pages/settings'));
+export const AdminDashboardPage = lazy(() => import('src/pages/admin-dashboard'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const SignUpPage = lazy(() => import('src/pages/sign-up'));
 export const GastosPage = lazy(() => import('src/pages/gastos'));
@@ -76,6 +77,10 @@ export const routesSection: RouteObject[] = [
           { path: 'perfil', element: <ProfilePage /> },
           { path: 'configuracion', element: <SettingsPage /> },
           { path: 'blog', element: <BlogPage /> },
+          {
+            element: <PrivateRoute allowedRoles={['admin']} />,
+            children: [{ path: 'admin', element: <AdminDashboardPage /> }],
+          },
         ],
       },
     ],
