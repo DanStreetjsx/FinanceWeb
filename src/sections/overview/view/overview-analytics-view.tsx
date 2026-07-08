@@ -23,11 +23,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { fPercent, fCurrency } from 'src/utils/format-number';
 
+import { ADS_CONFIG } from 'src/config/ads-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAuthStatus } from 'src/services/auth/AuthRepositoryHooks';
 import { useDashboardData } from 'src/services/analiticas/AnaliticasRepositoryHooks';
 
 import { Iconify } from 'src/components/iconify';
+import { AdSenseSlot } from 'src/components/ads';
 
 import { AnalyticsCurrentVisits } from '../analytics-current-visits';
 import { AnalyticsWebsiteVisits } from '../analytics-website-visits';
@@ -330,6 +332,12 @@ export function OverviewAnalyticsView() {
             </Grid>
           </Grid>
         </Card>
+
+        <AdSenseSlot
+          label="Publicidad"
+          minHeight={110}
+          slot={ADS_CONFIG.DASHBOARD_TOP_SLOT || ADS_CONFIG.DASHBOARD_BOTTOM_SLOT}
+        />
 
         <Popover
           open={monthPickerOpen}
@@ -772,6 +780,12 @@ export function OverviewAnalyticsView() {
             />
           </Grid>
         </Grid>
+
+        <AdSenseSlot
+          label="Publicidad"
+          minHeight={110}
+          slot={ADS_CONFIG.DASHBOARD_BOTTOM_SLOT || ADS_CONFIG.DASHBOARD_TOP_SLOT}
+        />
       </Stack>
 
       <Dialog

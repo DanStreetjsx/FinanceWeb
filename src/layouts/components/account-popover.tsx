@@ -14,7 +14,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter, usePathname } from 'src/routes/hooks';
 
-import { useLogout } from 'src/services/auth/AuthRepositoryHooks';
+import { useLogout, useAuthStatus } from 'src/services/auth/AuthRepositoryHooks';
 
 // ----------------------------------------------------------------------
 
@@ -34,10 +34,13 @@ type LocalStorageUser = {
   role?: string;
 };
 
+const ADMIN_PHONE_NUMBERS = ['903194831'];
+
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { logout } = useLogout();
+  const { user } = useAuthStatus();
   
   // Estado para almacenar los datos del usuario
   const [userData, setUserData] = useState({
@@ -51,17 +54,29 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     try {
       const userStr = localStorage.getItem('user');
       if (userStr) {
-        const user = JSON.parse(userStr) as LocalStorageUser;
+        const storedUser = JSON.parse(userStr) as LocalStorageUser;
         setUserData({
-          name: user.name || '',
-          phone_number: user.phone_number || '',
-          role: user.role || 'user',
+          name: storedUser.name || '',
+          phone_number: storedUser.phone_number || '',
+          role: storedUser.role || 'user',
         });
       }
     } catch {
       // Si falla el parseo, se usan valores vacíos por defecto.
     }
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    setUserData({
+      name: user.name || '',
+      phone_number: user.phone_number || '',
+      role: user.role || 'user',
+    });
+  }, [user]);
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -92,7 +107,9 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   // Nombre completo para mostrar
   const displayName = userData.name.trim();
-  const visibleOptions = data.filter((option) => !option.roles || option.roles.includes(userData.role));
+  const normalizedPhone = userData.phone_number.replace(/\D/g, '');
+  const isAdmin = userData.role === 'admin' || ADMIN_PHONE_NUMBERS.includes(normalizedPhone);
+  const visibleOptions = data.filter((option) => !option.roles || option.roles.includes(userData.role) || (isAdmin && option.roles.includes('admin')));
 
   return (
     <>

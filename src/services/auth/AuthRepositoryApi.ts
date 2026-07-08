@@ -130,6 +130,8 @@ export class AuthRepositoryApi implements IAuthRepository {
       const response = await api.post<User>(
         `${AuthEndpoints.VERIFY_TOKEN}`
       );
+
+      localStorage.setItem(USER_KEY, JSON.stringify(response.data));
       
       
       return {

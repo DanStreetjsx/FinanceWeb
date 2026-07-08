@@ -7,10 +7,10 @@
 
 const API_CONFIG = {
   development: {
-    BASE_URL: 'http://localhost:8000/api',
+    BASE_URL: 'http://127.0.0.1:8000/api',
   },
   production: {
-    BASE_URL: 'https://api.financ.site/api',
+    BASE_URL: 'http://localhost:3039/api',
   },
 };
 

@@ -17,6 +17,31 @@ type AdSenseSlotProps = {
   label?: string;
 };
 
+const ADSENSE_SCRIPT_SELECTOR = 'script[data-finance-adsense="true"]';
+
+function loadAdSenseScript() {
+  const existingScript = document.querySelector<HTMLScriptElement>(ADSENSE_SCRIPT_SELECTOR);
+
+  if (existingScript) {
+    return existingScript;
+  }
+
+  if (!ADS_CONFIG.ADSENSE_SCRIPT_URL) {
+    return null;
+  }
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.src = ADS_CONFIG.ADSENSE_SCRIPT_URL;
+  script.dataset.financeAdsense = 'true';
+  script.setAttribute('data-ad-client', ADS_CONFIG.ADSENSE_CLIENT_ID);
+
+  document.head.appendChild(script);
+
+  return script;
+}
+
 export function AdSenseSlot({
   slot,
   minHeight = 90,
@@ -30,18 +55,56 @@ export function AdSenseSlot({
 
   useEffect(() => {
     if (!hasValidConfig || !adRef.current || wasRequestedRef.current) {
-      return;
+      return undefined;
     }
 
-    try {
+    const requestAd = () => {
       const adsWindow = window as AdSenseWindow;
       adsWindow.adsbygoogle = adsWindow.adsbygoogle || [];
       adsWindow.adsbygoogle.push({});
       wasRequestedRef.current = true;
-    } catch {
-      // Ignorado: si AdSense no está listo, no rompemos la UI.
+    };
+
+    try {
+      const script = loadAdSenseScript();
+
+      if (!script) {
+        return undefined;
+      }
+
+      if ((window as AdSenseWindow).adsbygoogle || script.dataset.loaded === 'true') {
+        requestAd();
+        return undefined;
+      }
+
+      const handleLoad = () => {
+        script.dataset.loaded = 'true';
+        requestAd();
+      };
+
+      script.addEventListener('load', handleLoad, { once: true });
+
+      return () => {
+        script.removeEventListener('load', handleLoad);
+      };
+    } catch (error) {
+      if (!import.meta.env.PROD) {
+        console.warn('No se pudo solicitar el anuncio de AdSense.', error);
+      }
     }
+
+    return undefined;
   }, [hasValidConfig]);
+
+  useEffect(() => {
+    if (!hasValidConfig && import.meta.env.PROD) {
+      console.warn('AdSense no se renderiza: revisa VITE_ENABLE_ADS, VITE_ADSENSE_CLIENT_ID y el slot.', {
+        enabled: ADS_ENABLED,
+        client: ADS_CONFIG.ADSENSE_CLIENT_ID,
+        slot,
+      });
+    }
+  }, [hasValidConfig, slot]);
 
   if (!hasValidConfig && !shouldRenderPlaceholder) {
     return null;
@@ -69,7 +132,7 @@ export function AdSenseSlot({
             adRef.current = node;
           }}
           className="adsbygoogle"
-          style={{ display: 'block', minHeight }}
+          style={{ display: 'block', minHeight, width: '100%', overflow: 'hidden' }}
           data-ad-client={ADS_CONFIG.ADSENSE_CLIENT_ID}
           data-ad-slot={slot}
           data-ad-format="auto"
@@ -95,4 +158,3 @@ export function AdSenseSlot({
     </Card>
   );
 }
-
