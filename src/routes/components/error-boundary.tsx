@@ -1,5 +1,6 @@
 import type { Theme, CSSObject } from '@mui/material/styles';
 
+import { useEffect } from 'react';
 import { useRouteError, isRouteErrorResponse } from 'react-router';
 
 import GlobalStyles from '@mui/material/GlobalStyles';
@@ -8,13 +9,29 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  const isChunkLoadError = error instanceof Error && isDynamicImportError(error);
+
+  useEffect(() => {
+    if (!isChunkLoadError) {
+      return;
+    }
+
+    const reloadKey = 'finance_chunk_reload_attempted';
+
+    if (sessionStorage.getItem(reloadKey) === 'true') {
+      return;
+    }
+
+    sessionStorage.setItem(reloadKey, 'true');
+    window.location.reload();
+  }, [isChunkLoadError]);
 
   return (
     <>
       {inputGlobalStyles()}
 
       <div className={errorBoundaryClasses.root}>
-        <div className={errorBoundaryClasses.container}>{renderErrorMessage(error)}</div>
+        <div className={errorBoundaryClasses.container}>{renderErrorMessage(error, isChunkLoadError)}</div>
       </div>
     </>
   );
@@ -34,7 +51,13 @@ function parseStackTrace(stack?: string) {
   };
 }
 
-function renderErrorMessage(error: unknown) {
+function isDynamicImportError(error: Error) {
+  return /Failed to fetch dynamically imported module|Importing a module script failed|Loading chunk|ChunkLoadError/i.test(
+    error.message
+  );
+}
+
+function renderErrorMessage(error: unknown, isChunkLoadError = false) {
   if (isRouteErrorResponse(error)) {
     return (
       <>
@@ -48,6 +71,17 @@ function renderErrorMessage(error: unknown) {
 
   if (error instanceof Error) {
     const { filePath, functionName } = parseStackTrace(error.stack);
+
+    if (isChunkLoadError) {
+      return (
+        <>
+          <h1 className={errorBoundaryClasses.title}>Actualizando la app...</h1>
+          <p className={errorBoundaryClasses.message}>
+            Hay una nueva versión publicada. Si esta pantalla no desaparece, recarga manualmente con Ctrl + F5.
+          </p>
+        </>
+      );
+    }
 
     return (
       <>
