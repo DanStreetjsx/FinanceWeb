@@ -20,4 +20,10 @@ export const _account: AccountPopoverProps['data'] = [
     href: '/dashboard/configuracion',
     icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
   },
+  {
+    label: 'Admin',
+    href: '/dashboard/admin',
+    icon: <Iconify width={22} icon="solar:chart-2-bold-duotone" />,
+    roles: ['admin'],
+  },
 ];

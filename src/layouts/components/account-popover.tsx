@@ -24,12 +24,14 @@ export type AccountPopoverProps = IconButtonProps & {
     href: string;
     icon?: React.ReactNode;
     info?: React.ReactNode;
+    roles?: string[];
   }[];
 };
 
 type LocalStorageUser = {
   name?: string;
   phone_number?: string;
+  role?: string;
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
@@ -41,6 +43,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   const [userData, setUserData] = useState({
     name: '',
     phone_number: '',
+    role: 'user',
   });
 
   // Cargar datos del usuario desde localStorage
@@ -52,6 +55,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         setUserData({
           name: user.name || '',
           phone_number: user.phone_number || '',
+          role: user.role || 'user',
         });
       }
     } catch {
@@ -88,6 +92,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   // Nombre completo para mostrar
   const displayName = userData.name.trim();
+  const visibleOptions = data.filter((option) => !option.roles || option.roles.includes(userData.role));
 
   return (
     <>
@@ -153,7 +158,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
             },
           }}
         >
-          {data.map((option) => (
+          {visibleOptions.map((option) => (
             <MenuItem
               key={option.label}
               selected={option.href === pathname}
