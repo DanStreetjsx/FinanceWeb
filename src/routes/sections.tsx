@@ -1,8 +1,8 @@
 import type { RouteObject } from 'react-router';
 
 import { lazy, Suspense } from 'react';
+import { Outlet } from 'react-router-dom';
 import { varAlpha } from 'minimal-shared/utils';
-import { Outlet, Navigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
@@ -15,6 +15,7 @@ import { PrivateRoute } from './privateRoute';
 // ----------------------------------------------------------------------
 
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
+export const HomePage = lazy(() => import('src/pages/home'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const IngresosPage = lazy(() => import('src/pages/ingresos'));
 export const PresupuestosPage = lazy(() => import('src/pages/presupuestos'));
@@ -52,7 +53,7 @@ const renderFallback = () => (
 export const routesSection: RouteObject[] = [
   {
     path: '/',
-    element: <Navigate to="/dashboard" replace />,
+    element: <HomePage />,
   },
   {
     path: 'dashboard',
