@@ -52,7 +52,7 @@ const renderFallback = () => (
 
 export const routesSection: RouteObject[] = [
   {
-    path: '/',
+    index: true,
     element: <HomePage />,
   },
   {
